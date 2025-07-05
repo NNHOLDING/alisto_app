@@ -1,97 +1,43 @@
-
 import streamlit as st
+import gspread
+from google.oauth2.service_account import Credentials
 from datetime import datetime
-import pytz
 
-# Estilo personalizado con fondo azul claro y marco plateado claro
-st.markdown(
-    """
-    <style>
-    .form-container {
-        background-color: #f0f0f0;
-        border: 2px solid #c0c0c0;
-        border-radius: 10px;
-        padding: 20px;
-        margin-top: 20px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+def guardar_en_google_sheets(fecha_lote, codigo_seleccionado, nombre_empleado, hora):
+    # Definir el alcance de acceso
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
 
-# Título
-st.title("Smart Intelligence Tools - Almacén Unimar")
+    # Obtener credenciales desde st.secrets
+    creds_dict = st.secrets["google_sheets"]
+    creds = Credentials.from_service_account_info(creds_dict, scopes=scope)
 
-# Obtener fecha y hora actual en zona horaria de Costa Rica
-cr_timezone = pytz.timezone("America/Costa_Rica")
-now_cr = datetime.now(cr_timezone)
+    # Autorizar cliente de Google Sheets
+    client = gspread.authorize(creds)
 
-# Contenedor del formulario con estilo
-with st.container():
-    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    # Abrir hoja de cálculo por URL y seleccionar la pestaña
+    sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit#gid=1441343050")
+    worksheet = sheet.worksheet("TCertificados")
 
-    with st.form("formulario_alisto"):
-        st.write("Por favor complete los siguientes campos:")
+    # Agregar fila con los datos
+    nueva_fila = [str(fecha_lote), str(codigo_seleccionado), nombre_empleado, str(hora)]
+    worksheet.append_row(nueva_fila)
 
-        # Fecha actual
-        fecha = st.date_input("Fecha", value=now_cr.date())
+    st.success("✅ Datos guardados correctamente en la hoja 'TCertificados'.")
 
-        # Lista desplegable para seleccionar placa
-        opciones_placa = [
-            200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
-            300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
-            400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412,
-            500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
-            "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
-        ]
-        opcion = st.selectbox("Seleccione una opción de placa", opciones_placa)
+# Interfaz de usuario con Streamlit
+def main():
+    st.title("📋 Registro en Google Sheets")
 
-        # Campo Placa autocompletado con la opción seleccionada
-        placa = st.text_input("Placa", value=str(opcion))
+    fecha_lote = st.date_input("📅 Fecha del lote")
+    codigo_seleccionado = st.text_input("🔢 Código seleccionado")
+    nombre_empleado = st.text_input("👤 Nombre del empleado")
+    hora = st.time_input("⏰ Hora")
 
-        # Campo Número de orden
-        numero_orden = st.text_input("Número de orden")
+    if st.button("Guardar en Google Sheets"):
+        guardar_en_google_sheets(fecha_lote, codigo_seleccionado, nombre_empleado, hora)
 
-        # Campo Código (para lector de código de barras)
-        codigo = st.text_input("Código (use lector de código de barras)")
-
-        # Campo Lote
-        lote = st.text_input("Lote")
-
-        # Campo Fecha adicional (por ejemplo, fecha de vencimiento o producción)
-        fecha_lote = st.date_input("Fecha vencimiento del lote")
-
-        # Nuevo selector de lista para códigos adicionales
-        valores_selector = [51417, 51416, 51918, 59907]
-        codigo_seleccionado = st.selectbox("Seleccione un código adicional", valores_selector)
-
-        # Hora actual
-        hora = st.time_input("Hora", value=now_cr.time())
-
-        # Botón de envío
-        submit = st.form_submit_button("Guardar")
-
-        if submit:
-            st.success("Datos enviados correctamente")
-            st.write("**Resumen de datos ingresados:**")
-            st.write(f"📅 Fecha: {fecha}")
-            st.write(f"🚚 Placa: {placa}")
-            st.write(f"🧾 Número de orden: {numero_orden}")
-            st.write(f"🔍 Código: {codigo}")
-            st.write(f"🏷️ Lote: {lote}")
-            st.write(f"📆 Fecha del lote: {fecha_lote}")
-            st.write(f"🔢 Código adicional seleccionado: {codigo_seleccionado}")
-            st.write(f"🕒 Hora: {hora}")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# Footer
-st.markdown(
-    """
-    <hr style="margin-top: 50px; border: none; border-top: 1px solid #ccc;" />
-    <div style="text-align: center; color: gray; font-size: 0.9em; margin-top: 20px;">
-        NN HOLDING SOLUTIONS &copy; 2025, Todos los derechos reservados
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+if __name__ == "__main__":
+    main()
