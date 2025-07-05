@@ -2,13 +2,14 @@ import streamlit as st
 from datetime import datetime
 import pytz
 import gspread
+import json
 from oauth2client.service_account import ServiceAccountCredentials
 
-# Función para guardar datos en Google Sheets usando st.secrets["google_sheets"]
+# Función para guardar datos en Google Sheets usando credenciales desde st.secrets
 def guardar_en_google_sheets(datos):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds_dict = st.secrets["google_sheets"]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(dict(creds_dict), scope)
+    creds_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"])
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     sheet = client.open_by_key("1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30").worksheet("TCertificados")
     sheet.append_row(datos)
