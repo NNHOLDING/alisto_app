@@ -4,15 +4,16 @@ import pytz
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-# Función para guardar datos en Google Sheets
+# Función para guardar datos en Google Sheets usando st.secrets
 def guardar_en_google_sheets(datos):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credenciales.json", scope)
+    creds_dict = st.secrets["google_sheets"]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(dict(creds_dict), scope)
     client = gspread.authorize(creds)
     sheet = client.open_by_key("1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30").worksheet("TCertificados")
     sheet.append_row(datos)
 
-# Estilo personalizado con fondo azul claro y marco plateado claro
+# Estilo personalizado
 st.markdown(
     """
     <style>
@@ -31,21 +32,19 @@ st.markdown(
 # Título
 st.title("Smart Intelligence Tools - Almacén Unimar")
 
-# Obtener fecha y hora actual en zona horaria de Costa Rica
+# Hora local de Costa Rica
 cr_timezone = pytz.timezone("America/Costa_Rica")
 now_cr = datetime.now(cr_timezone)
 
-# Contenedor del formulario con estilo
+# Contenedor del formulario
 with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
 
     with st.form("formulario_alisto"):
         st.write("Por favor complete los siguientes campos:")
 
-        # Fecha actual
         fecha = st.date_input("Fecha", value=now_cr.date())
 
-        # Lista desplegable para seleccionar placa
         opciones_placa = [
             200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
             300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
@@ -54,36 +53,17 @@ with st.container():
             "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
         ]
         opcion = st.selectbox("Seleccione una opción de placa", opciones_placa)
-
-        # Campo Placa autocompletado con la opción seleccionada
         placa = st.text_input("Placa", value=str(opcion))
-
-        # Campo Número de orden
         numero_orden = st.text_input("Número de orden")
-
-        # Campo Código (para lector de código de barras)
         codigo = st.text_input("Código (use lector de código de barras)")
-
-        # Campo Descripción de producto
         descripcion = st.text_input("Descripción de producto")
-
-        # Campo Lote
         lote = st.text_input("Lote")
-
-        # Campo Fecha adicional (por ejemplo, fecha de vencimiento o producción)
         fecha_lote = st.date_input("Fecha vencimiento del lote")
-
-        # Nuevo selector de lista para códigos adicionales
         valores_selector = [51417, 51416, 51918, 59907]
         codigo_seleccionado = st.selectbox("Seleccione un código adicional", valores_selector)
-
-        # Campo Nombre de empleado
         nombre_empleado = st.text_input("Nombre de empleado")
-
-        # Hora actual
         hora = st.time_input("Hora", value=now_cr.time())
 
-        # Botón de envío
         submit = st.form_submit_button("Guardar")
 
         if submit:
