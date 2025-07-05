@@ -1,0 +1,88 @@
+CODIGO ANTES DE LOS CAMPOS LOTES Y FECHA VENCIMIENTO:
+
+import streamlit as st
+from datetime import datetime
+import pytz
+
+# Estilo personalizado con fondo azul claro y marco plateado claro
+st.markdown(
+    """
+    <style>
+    .form-container {
+        background-color: #f0f0f0;
+        border: 2px solid #c0c0c0;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Título
+st.title("Smart Intelligence Tools - Almacén Unimar")
+
+# Obtener fecha y hora actual en zona horaria de Costa Rica
+cr_timezone = pytz.timezone("America/Costa_Rica")
+now_cr = datetime.now(cr_timezone)
+
+# Contenedor del formulario con estilo
+with st.container():
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+
+    with st.form("formulario_alisto"):
+        st.write("Por favor complete los siguientes campos:")
+
+        # Fecha actual
+        fecha = st.date_input("Fecha", value=now_cr.date())
+
+        # Lista desplegable para seleccionar placa
+        opciones_placa = [
+            200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
+            300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
+            400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412,
+            500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
+            "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
+        ]
+        opcion = st.selectbox("Seleccione una opción de placa", opciones_placa)
+
+        # Campo Placa autocompletado con la opción seleccionada
+        placa = st.text_input("Placa", value=str(opcion))
+
+        # Campo Número de orden
+        numero_orden = st.text_input("Número de orden")
+
+        # Campo Código (para lector de código de barras)
+        codigo = st.text_input("Código (use lector de código de barras)")
+
+        # Cantidad de líneas
+        #cantidad_lineas = st.number_input("Cantidad de líneas", min_value=0, step=1)
+
+        # Hora actual
+        hora = st.time_input("Hora", value=now_cr.time())
+
+        # Botón de envío
+        submit = st.form_submit_button("Guardar")
+
+        if submit:
+            st.success("Datos enviados correctamente")
+            st.write("**Resumen de datos ingresados:**")
+            st.write(f"📅 Fecha: {fecha}")
+            st.write(f"🚚 Placa: {placa}")
+            st.write(f"🧾 Número de orden: {numero_orden}")
+            st.write(f"🔍 Código: {codigo}")
+            st.write(f"📦 Cantidad de líneas: {cantidad_lineas}")
+            st.write(f"🕒 Hora: {hora}")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+# Footer
+st.markdown(
+    """
+    <hr style="margin-top: 50px; border: none; border-top: 1px solid #ccc;" />
+    <div style="text-align: center; color: gray; font-size: 0.9em; margin-top: 20px;">
+        NN HOLDING SOLUTIONS &copy; 2025, Todos los derechos reservados
+    </div>
+    """,
+    unsafe_allow_html=True
+)

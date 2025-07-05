@@ -1,0 +1,83 @@
+PARA GUARDAR DATOS EN EXCEL----
+
+import streamlit as st
+from datetime import datetime
+import pytz
+import pandas as pd
+import os
+
+# Estilo personalizado
+st.markdown(
+    """
+    <style>
+    .form-container {
+        background-color: #f0f0f0;
+        border: 2px solid #c0c0c0;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+st.title("Smart Intelligence Tools - Almacén Unimar")
+
+cr_timezone = pytz.timezone("America/Costa_Rica")
+now_cr = datetime.now(cr_timezone)
+
+with st.container():
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+
+    with st.form("formulario_alisto"):
+        st.write("Por favor complete los siguientes campos:")
+
+        fecha = st.date_input("Fecha", value=now_cr.date())
+
+        opciones_placa = [
+            200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
+            300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
+            400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412,
+            500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
+            "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
+        ]
+        opcion = st.selectbox("Seleccione una opción de placa", opciones_placa)
+        placa = st.text_input("Placa", value=str(opcion))
+        numero_orden = st.text_input("Número de orden")
+        codigo = st.text_input("Código (use lector de código de barras)")
+        cantidad_lineas = st.number_input("Cantidad de líneas", min_value=0, step=1)
+        hora = st.time_input("Hora", value=now_cr.time())
+
+        submit = st.form_submit_button("Iniciar")
+
+        if submit:
+            st.success("Datos enviados correctamente")
+            st.write("**Resumen de datos ingresados:**")
+            st.write(f"📅 Fecha: {fecha}")
+            st.write(f"🚚 Placa: {placa}")
+            st.write(f"🧾 Número de orden: {numero_orden}")
+            st.write(f"🔍 Código: {codigo}")
+            st.write(f"📦 Cantidad de líneas: {cantidad_lineas}")
+            st.write(f"🕒 Hora: {hora}")
+
+            # Crear DataFrame con los datos
+            datos = pd.DataFrame([{
+                "Fecha": fecha,
+                "Hora": hora,
+                "Placa": placa,
+                "Número de orden": numero_orden,
+                "Código": codigo,
+                "Cantidad de líneas": cantidad_lineas
+            }])
+
+            # Guardar en Excel (agregar si ya existe)
+            archivo = "datos_formulario.xlsx"
+            if os.path.exists(archivo):
+                datos_existentes = pd.read_excel(archivo)
+                datos = pd.concat([datos_existentes, datos], ignore_index=True)
+
+            datos.to_excel(archivo, index=False)
+            st.info(f"Los datos se guardaron en el archivo **{archivo}**")
+
+    st.markdown('</div>', unsafe_allow_html=True)
