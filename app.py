@@ -65,22 +65,15 @@ with st.form("formulario_alisto"):
     # Campo de código con valor precargado desde la URL
     codigo = st.text_input("Código (use lector de código de barras)", value=codigo_escaneado)
 
-    # Campo oculto: Descripción de producto
-    st.markdown('<div style="display:none">', unsafe_allow_html=True)
-    descripcion = st.text_input("Descripción de producto", value="")
-    st.markdown('</div>', unsafe_allow_html=True)
+    # Campos ocultos (no se muestran en la interfaz)
+    descripcion = ""
+    nombre_empleado = ""
 
     cantidad = st.number_input("Cantidad", min_value=1, step=1)
     lote = st.text_input("Lote")
     fecha_lote = st.date_input("Fecha vencimiento del lote")
     valores_selector = [51417, 51416, 51918, 59907]
     codigo_seleccionado = st.selectbox("Seleccione un código adicional", valores_selector)
-
-    # Campo oculto: Nombre de empleado
-    st.markdown('<div style="display:none">', unsafe_allow_html=True)
-    nombre_empleado = st.text_input("Nombre de empleado", value="")
-    st.markdown('</div>', unsafe_allow_html=True)
-
     hora = st.time_input("Hora", value=now_cr.time())
 
     submit = st.form_submit_button("Guardar")
