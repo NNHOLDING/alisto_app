@@ -41,17 +41,21 @@ codigo_escaneado = st.query_params.get("codigo", [""])[0]
 st.markdown('<div class="form-container">', unsafe_allow_html=True)
 
 # Escáner con cámara (QuaggaJS) y redirección automática
-st.markdown("### 📷 Escanear código con cámara")
+if not codigo_escaneado:
+    st.markdown("### 📷 Escanear código con cámara")
+    components.html(
+        f"""
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+        <div id="scanner-container" style="width:100%; max-width:400px; margin:auto; border: 2px solid #ccc; border-radius: 10px;"></div>
+        <p id="output" style="text-align:center; font-size:20px; font-weight:bold; margin-top: 20px;">Esperando escaneo...</p>
 
-components.html(
-    f"""
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-    <div id="scanner-container" style="width:100%; max-width:400px; margin:auto; border: 2px solid #ccc; border-radius: 10px;"></div>
-    <p id="output" style="text-align:center; font-size:20px; font-weight:bold; margin-top: 20px;"></p>
+        <script>
+        function startScanner() {{
+            if (!window.Quagga) {{
+                document.getElementById("output").innerText = "❌ QuaggaJS no se cargó correctamente.";
+                return;
+            }}
 
-    <script>
-    function startScanner() {{
-        if (window.Quagga) {{
             Quagga.init({{
                 inputStream: {{
                     name: "Live",
@@ -64,29 +68,38 @@ components.html(
                 decoder: {{
                     readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader"]
                 }},
+                locate: true
             }}, function(err) {{
                 if (err) {{
-                    console.error(err);
-                    document.getElementById("output").innerText = "Error al iniciar el escáner: " + err;
+                    console.error("Error al iniciar Quagga:", err);
+                    document.getElementById("output").innerText = "❌ Error al iniciar el escáner: " + err;
                     return;
                 }}
                 Quagga.start();
+                document.getElementById("output").innerText = "📷 Escáner activo. Escanea un código...";
             }});
+
+            let lastCode = null;
 
             Quagga.onDetected(function(result) {{
                 const code = result.codeResult.code;
-                Quagga.stop();
-                document.getElementById("output").innerText = "✅ Código detectado: " + code;
-                window.location.href = window.location.pathname + "?codigo=" + encodeURIComponent(code);
+                if (code !== lastCode) {{
+                    lastCode = code;
+                    document.getElementById("output").innerText = "✅ Código detectado: " + code;
+                    Quagga.stop();
+                    document.getElementById("scanner-container").style.display = "none";
+                    setTimeout(function() {{
+                        window.location.href = window.location.pathname + "?codigo=" + encodeURIComponent(code);
+                    }}, 1000);
+                }}
             }});
         }}
-    }}
 
-    startScanner();
-    </script>
-    """,
-    height=500
-)
+        startScanner();
+        </script>
+        """,
+        height=500
+    )
 
 with st.form("formulario_alisto"):
     st.write("Por favor complete los siguientes campos:")
