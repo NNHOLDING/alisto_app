@@ -1,44 +1,3 @@
-import streamlit as st
-from datetime import datetime
-import pytz
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-
-# Función para guardar datos en Google Sheets
-def guardar_en_google_sheets(datos):
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    service_account_info = st.secrets["gcp_service_account"]
-    credentials = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
-    client = gspread.authorize(credentials)
-    sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit").worksheet("TCertificados")
-    sheet.append_row(datos)
-
-# Estilo personalizado
-st.markdown(
-    """
-    <style>
-    .form-container {
-        background-color: #f0f0f0;
-        border: 2px solid #c0c0c0;
-        border-radius: 10px;
-        padding: 20px;
-        margin-top: 20px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# Título
-st.title("Smart Intelligence Tools - Almacén Unimar")
-
-# Hora local de Costa Rica
-cr_timezone = pytz.timezone("America/Costa_Rica")
-now_cr = datetime.now(cr_timezone)
-
-# Captura del código escaneado desde la URL
-codigo_escaneado = st.query_params.get("codigo", [""])[0]
-
 # Contenedor del formulario
 with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
@@ -65,13 +24,25 @@ with st.container():
 
         # Campo de código con valor precargado desde la URL
         codigo = st.text_input("Código (use lector de código de barras)", value=codigo_escaneado)
-        descripcion = st.text_input("Descripción de producto")
+
+        # Campo oculto: Descripción de producto
+        with st.container():
+            st.markdown('<div style="display:none">', unsafe_allow_html=True)
+            descripcion = st.text_input("Descripción de producto", value="")
+            st.markdown('</div>', unsafe_allow_html=True)
+
         cantidad = st.number_input("Cantidad", min_value=1, step=1)
         lote = st.text_input("Lote")
         fecha_lote = st.date_input("Fecha vencimiento del lote")
         valores_selector = [51417, 51416, 51918, 59907]
         codigo_seleccionado = st.selectbox("Seleccione un código adicional", valores_selector)
-        nombre_empleado = st.text_input("Nombre de empleado")
+
+        # Campo oculto: Nombre de empleado
+        with st.container():
+            st.markdown('<div style="display:none">', unsafe_allow_html=True)
+            nombre_empleado = st.text_input("Nombre de empleado", value="")
+            st.markdown('</div>', unsafe_allow_html=True)
+
         hora = st.time_input("Hora", value=now_cr.time())
 
         submit = st.form_submit_button("Guardar")
@@ -97,14 +68,3 @@ with st.container():
             ])
 
     st.markdown('</div>', unsafe_allow_html=True)
-
-# Footer
-st.markdown(
-    """
-    <hr style="margin-top: 50px; border: none; border-top: 1px solid #ccc;" />
-    <div style="text-align: center; color: gray; font-size: 0.9em; margin-top: 20px;">
-        NN HOLDING SOLUTIONS &copy; 2025, Todos los derechos reservados
-    </div>
-    """,
-    unsafe_allow_html=True
-)
