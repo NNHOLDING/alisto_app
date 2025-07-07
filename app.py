@@ -3,6 +3,7 @@ from datetime import datetime
 import pytz
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from streamlit_js_eval import streamlit_js_eval
 
 # Función para guardar datos en Google Sheets
 def guardar_en_google_sheets(datos):
@@ -14,8 +15,7 @@ def guardar_en_google_sheets(datos):
     sheet.append_row(datos)
 
 # Estilo personalizado
-st.markdown(
-    """
+st.markdown("""
     <style>
     .form-container {
         background-color: #f0f0f0;
@@ -25,9 +25,7 @@ st.markdown(
         margin-top: 20px;
     }
     </style>
-    """,
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
 # Título
 st.title("Smart Intelligence Tools - Almacén Unimar")
@@ -41,6 +39,47 @@ codigo_escaneado = st.query_params.get("codigo", [""])[0]
 
 # Contenedor del formulario con estilo
 st.markdown('<div class="form-container">', unsafe_allow_html=True)
+
+# Escáner con cámara (QuaggaJS) y retorno automático
+st.markdown("### 📷 Escanear código con cámara")
+codigo_detectado = streamlit_js_eval(
+    js_code="""
+    new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
+        script.onload = () => {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.body,
+                    constraints: {
+                        facingMode: "environment"
+                    },
+                },
+                decoder: {
+                    readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader"]
+                },
+            }, function(err) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                    return;
+                }
+                Quagga.start();
+            });
+
+            Quagga.onDetected(function(result) {
+                const code = result.codeResult.code;
+                Quagga.stop();
+                resolve(code);
+            });
+        };
+        document.body.appendChild(script);
+    });
+    """,
+    key="quagga"
+)
 
 with st.form("formulario_alisto"):
     st.write("Por favor complete los siguientes campos:")
@@ -58,14 +97,10 @@ with st.form("formulario_alisto"):
     placa = st.text_input("Placa", value=str(opcion))
     numero_orden = st.text_input("Número de orden")
 
-    # Botón para abrir la app de escaneo
-    scan_url = "intent://scan/#Intent;scheme=zxing;package=com.datalogic.scan.demo;end"
-    st.markdown(f'<a href="{scan_url}"><button type="button">📷 Escanear código</button></a>', unsafe_allow_html=True)
+    # Campo de código con valor automático desde escáner
+    codigo = st.text_input("Código (use lector o escáner)", value=codigo_detectado or codigo_escaneado)
 
-    # Campo de código con valor precargado desde la URL
-    codigo = st.text_input("Código (use lector de código de barras)", value=codigo_escaneado)
-
-    # Campos ocultos (no se muestran en la interfaz)
+    # Campos ocultos
     descripcion = ""
     nombre_empleado = ""
 
@@ -101,12 +136,9 @@ with st.form("formulario_alisto"):
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Footer
-st.markdown(
-    """
+st.markdown("""
     <hr style="margin-top: 50px; border: none; border-top: 1px solid #ccc;" />
     <div style="text-align: center; color: gray; font-size: 0.9em; margin-top: 20px;">
         NN HOLDING SOLUTIONS &copy; 2025, Todos los derechos reservados
     </div>
-    """,
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
