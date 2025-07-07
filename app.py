@@ -3,7 +3,7 @@ from datetime import datetime
 import pytz
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from streamlit_js_eval import streamlit_js_eval
+import streamlit.components.v1 as components
 
 # Función para guardar datos en Google Sheets
 def guardar_en_google_sheets(datos):
@@ -40,45 +40,52 @@ codigo_escaneado = st.query_params.get("codigo", [""])[0]
 # Contenedor del formulario con estilo
 st.markdown('<div class="form-container">', unsafe_allow_html=True)
 
-# Escáner con cámara (QuaggaJS) y retorno automático
+# Escáner con cámara (QuaggaJS) y redirección automática
 st.markdown("### 📷 Escanear código con cámara")
-codigo_detectado = streamlit_js_eval(
-    js_code="""
-    new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
-        script.onload = () => {
-            Quagga.init({
-                inputStream: {
+
+components.html(
+    f"""
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <div id="scanner-container" style="width:100%; max-width:400px; margin:auto; border: 2px solid #ccc; border-radius: 10px;"></div>
+    <p id="output" style="text-align:center; font-size:20px; font-weight:bold; margin-top: 20px;"></p>
+
+    <script>
+    function startScanner() {{
+        if (window.Quagga) {{
+            Quagga.init({{
+                inputStream: {{
                     name: "Live",
                     type: "LiveStream",
-                    target: document.body,
-                    constraints: {
+                    target: document.querySelector('#scanner-container'),
+                    constraints: {{
                         facingMode: "environment"
-                    },
-                },
-                decoder: {
+                    }},
+                }},
+                decoder: {{
                     readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader"]
-                },
-            }, function(err) {
-                if (err) {
+                }},
+            }}, function(err) {{
+                if (err) {{
                     console.error(err);
-                    reject(err);
+                    document.getElementById("output").innerText = "Error al iniciar el escáner: " + err;
                     return;
-                }
+                }}
                 Quagga.start();
-            });
+            }});
 
-            Quagga.onDetected(function(result) {
+            Quagga.onDetected(function(result) {{
                 const code = result.codeResult.code;
                 Quagga.stop();
-                resolve(code);
-            });
-        };
-        document.body.appendChild(script);
-    });
+                document.getElementById("output").innerText = "✅ Código detectado: " + code;
+                window.location.href = window.location.pathname + "?codigo=" + encodeURIComponent(code);
+            }});
+        }}
+    }}
+
+    startScanner();
+    </script>
     """,
-    key="quagga"
+    height=500
 )
 
 with st.form("formulario_alisto"):
@@ -97,8 +104,8 @@ with st.form("formulario_alisto"):
     placa = st.text_input("Placa", value=str(opcion))
     numero_orden = st.text_input("Número de orden")
 
-    # Campo de código con valor automático desde escáner
-    codigo = st.text_input("Código (use lector o escáner)", value=codigo_detectado or codigo_escaneado)
+    # Campo de código con valor precargado desde la URL
+    codigo = st.text_input("Código (use lector o escáner)", value=codigo_escaneado)
 
     # Campos ocultos
     descripcion = ""
