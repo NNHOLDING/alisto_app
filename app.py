@@ -56,12 +56,12 @@ with st.container():
         placa = st.text_input("Placa", value=str(opcion))
         numero_orden = st.text_input("Número de orden")
         codigo = st.text_input("Código (use lector de código de barras)")
-        descripcion = st.text_input("Descripción de producto")
+        #descripcion = st.text_input("Descripción de producto")
         lote = st.text_input("Lote")
         fecha_lote = st.date_input("Fecha vencimiento del lote")
         valores_selector = [51417, 51416, 51918, 59907]
         codigo_seleccionado = st.selectbox("Seleccione un código adicional", valores_selector)
-        nombre_empleado = st.text_input("Nombre de empleado")
+        #nombre_empleado = st.text_input("Nombre de empleado")
         hora = st.time_input("Hora", value=now_cr.time())
 
         submit = st.form_submit_button("Guardar")
