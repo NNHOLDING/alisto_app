@@ -36,6 +36,7 @@ now_cr = datetime.now(cr_timezone)
 
 # Captura del código escaneado desde la URL
 codigo_escaneado = st.query_params.get("codigo", [""])[0]
+st.write("🧪 Código escaneado desde URL:", codigo_escaneado)  # Para depuración
 
 # Contenedor del formulario con estilo
 st.markdown('<div class="form-container">', unsafe_allow_html=True)
@@ -118,7 +119,7 @@ with st.form("formulario_alisto"):
     numero_orden = st.text_input("Número de orden")
 
     # Campo de código con valor precargado desde la URL
-    codigo = st.text_input("Código (use lector o escáner)", value=codigo_escaneado)
+    codigo = st.text_input("Código (use lector o escáner)", value=codigo_escaneado or "", key="codigo_input")
 
     # Campos ocultos
     descripcion = ""
