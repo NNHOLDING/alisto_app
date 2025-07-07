@@ -7,7 +7,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 # Función para guardar datos en Google Sheets usando st.secrets["google_sheets"]
 def guardar_en_google_sheets(datos):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds_dict = st.secrets["google_sheets"]
+    service_account_info = st.secrets["gcp_service_account"]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(dict(creds_dict), scope)
     client = gspread.authorize(creds)
     sheet = client.open_by_key("1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30").worksheet("TCertificados")
