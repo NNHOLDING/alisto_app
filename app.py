@@ -74,12 +74,12 @@ with st.container():
             st.write(f"🚚 Placa: {placa}")
             st.write(f"🧾 Número de orden: {numero_orden}")
             st.write(f"🔍 Código: {codigo}")
-            #st.write(f"📝 Descripción: {descripcion}")
+            st.write(f"📝 Descripción: {descripcion}")
             st.write(f"📦 Cantidad: {cantidad}")
             st.write(f"🏷️ Lote: {lote}")
             st.write(f"📆 Fecha del lote: {fecha_lote}")
             st.write(f"🔢 Código adicional seleccionado: {codigo_seleccionado}")
-            #st.write(f"👤 Nombre de empleado: {nombre_empleado}")
+            st.write(f"👤 Nombre de empleado: {nombre_empleado}")
             st.write(f"🕒 Hora: {hora}")
 
             guardar_en_google_sheets([
