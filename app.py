@@ -57,6 +57,7 @@ with st.container():
         numero_orden = st.text_input("Número de orden")
         codigo = st.text_input("Código (use lector de código de barras)")
         descripcion = st.text_input("Descripción de producto")
+        cantidad = st.number_input("Cantidad", min_value=1, step=1)  # 👈 Campo ubicado justo después de descripción
         lote = st.text_input("Lote")
         fecha_lote = st.date_input("Fecha vencimiento del lote")
         valores_selector = [51417, 51416, 51918, 59907]
@@ -74,6 +75,7 @@ with st.container():
             st.write(f"🧾 Número de orden: {numero_orden}")
             st.write(f"🔍 Código: {codigo}")
             st.write(f"📝 Descripción: {descripcion}")
+            st.write(f"📦 Cantidad: {cantidad}")
             st.write(f"🏷️ Lote: {lote}")
             st.write(f"📆 Fecha del lote: {fecha_lote}")
             st.write(f"🔢 Código adicional seleccionado: {codigo_seleccionado}")
@@ -81,7 +83,7 @@ with st.container():
             st.write(f"🕒 Hora: {hora}")
 
             guardar_en_google_sheets([
-                str(fecha), placa, numero_orden, codigo, descripcion, lote,
+                str(fecha), placa, numero_orden, codigo, descripcion, cantidad, lote,
                 str(fecha_lote), str(codigo_seleccionado), nombre_empleado, str(hora)
             ])
 
