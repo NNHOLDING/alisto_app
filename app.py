@@ -8,9 +8,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 def guardar_en_google_sheets(datos):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     service_account_info = st.secrets["gcp_service_account"]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(dict(creds_dict), scope)
-    client = gspread.authorize(creds)
-    sheet = client.open_by_key("1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30").worksheet("TCertificados")
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
+    client = gspread.authorize(credentials)
+    sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit").worksheet("TCertificados")
     sheet.append_row(datos)
 
 # Estilo personalizado
