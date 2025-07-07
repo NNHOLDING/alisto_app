@@ -37,7 +37,7 @@ cr_timezone = pytz.timezone("America/Costa_Rica")
 now_cr = datetime.now(cr_timezone)
 
 # Captura del código escaneado desde la URL
-codigo_escaneado = st.experimental_get_query_params().get("codigo", [""])[0]
+codigo_escaneado = st.query_params.get("codigo", [""])[0]
 
 # Contenedor del formulario
 with st.container():
