@@ -4,7 +4,7 @@ import pytz
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-# Función para guardar datos en Google Sheets usando st.secrets["google_sheets"]
+# Función para guardar datos en Google Sheets
 def guardar_en_google_sheets(datos):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     service_account_info = st.secrets["gcp_service_account"]
@@ -36,6 +36,9 @@ st.title("Smart Intelligence Tools - Almacén Unimar")
 cr_timezone = pytz.timezone("America/Costa_Rica")
 now_cr = datetime.now(cr_timezone)
 
+# Captura del código escaneado desde la URL
+codigo_escaneado = st.experimental_get_query_params().get("codigo", [""])[0]
+
 # Contenedor del formulario
 with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
@@ -55,9 +58,15 @@ with st.container():
         opcion = st.selectbox("Seleccione una opción de placa", opciones_placa)
         placa = st.text_input("Placa", value=str(opcion))
         numero_orden = st.text_input("Número de orden")
-        codigo = st.text_input("Código (use lector de código de barras)")
+
+        # Botón para abrir la app de escaneo
+        scan_url = "intent://scan/#Intent;scheme=zxing;package=com.datalogic.scan.demo;end"
+        st.markdown(f'<a href="{scan_url}"><button type="button">📷 Escanear código</button></a>', unsafe_allow_html=True)
+
+        # Campo de código con valor precargado desde la URL
+        codigo = st.text_input("Código (use lector de código de barras)", value=codigo_escaneado)
         descripcion = st.text_input("Descripción de producto")
-        cantidad = st.number_input("Cantidad", min_value=1, step=1)  # 👈 Campo ubicado justo después de descripción
+        cantidad = st.number_input("Cantidad", min_value=1, step=1)
         lote = st.text_input("Lote")
         fecha_lote = st.date_input("Fecha vencimiento del lote")
         valores_selector = [51417, 51416, 51918, 59907]
