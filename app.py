@@ -56,13 +56,13 @@ with st.container():
         placa = st.text_input("Placa", value=str(opcion))
         numero_orden = st.text_input("Número de orden")
         codigo = st.text_input("Código (use lector de código de barras)")
-        descripcion = st.text_input("Descripción de producto")
+        #descripcion = st.text_input("Descripción de producto")
         cantidad = st.number_input("Cantidad", min_value=1, step=1)  # 👈 Campo ubicado justo después de descripción
         lote = st.text_input("Lote")
         fecha_lote = st.date_input("Fecha vencimiento del lote")
         valores_selector = [51417, 51416, 51918, 59907]
         codigo_seleccionado = st.selectbox("Seleccione un código adicional", valores_selector)
-        nombre_empleado = st.text_input("Nombre de empleado")
+        #nombre_empleado = st.text_input("Nombre de empleado")
         hora = st.time_input("Hora", value=now_cr.time())
 
         submit = st.form_submit_button("Guardar")
@@ -74,12 +74,12 @@ with st.container():
             st.write(f"🚚 Placa: {placa}")
             st.write(f"🧾 Número de orden: {numero_orden}")
             st.write(f"🔍 Código: {codigo}")
-            st.write(f"📝 Descripción: {descripcion}")
+            #st.write(f"📝 Descripción: {descripcion}")
             st.write(f"📦 Cantidad: {cantidad}")
             st.write(f"🏷️ Lote: {lote}")
             st.write(f"📆 Fecha del lote: {fecha_lote}")
             st.write(f"🔢 Código adicional seleccionado: {codigo_seleccionado}")
-            st.write(f"👤 Nombre de empleado: {nombre_empleado}")
+            #st.write(f"👤 Nombre de empleado: {nombre_empleado}")
             st.write(f"🕒 Hora: {hora}")
 
             guardar_en_google_sheets([
