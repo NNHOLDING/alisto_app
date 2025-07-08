@@ -109,7 +109,7 @@ with st.form("formulario_alisto"):
     cantidad = st.number_input("Cantidad", min_value=1, step=1)
     lote = st.text_input("Lote")
     fecha_lote = st.date_input("Fecha vencimiento del lote")
-    valores_selector = [51417, 51416, 51918, 59907]
+    valores_selector = [51417, 51416, 51918, 59907, 51918, 56353, 59907]
     codigo_seleccionado = st.selectbox("Seleccione un código adicional", valores_selector)
     hora = st.time_input("Hora", value=now_cr.time())
 
