@@ -47,7 +47,7 @@ now_cr = datetime.now(cr_timezone)
 # Captura del código escaneado desde la URL
 codigo_escaneado = st.query_params.get("codigo", [""])[0]
 
-# Diccionario de empleados actualizado
+# Diccionario de empleados
 empleados = {
     51857: "Carlos Carvajal Villalobos",
     59157: "Allan Valenciano Delgado",
@@ -84,6 +84,7 @@ empleados = {
     50205: "Hanzel Díaz",
     50403: "Administrador1"
 }
+
 
 # Contenedor del formulario
 with st.container():
