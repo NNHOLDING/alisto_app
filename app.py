@@ -1,3 +1,4 @@
+import streamlit as st
 from datetime import datetime
 import pytz
 import gspread
@@ -40,40 +41,11 @@ codigo_escaneado = st.query_params.get("codigo", [""])[0]
 
 # Diccionario de empleados
 empleados = {
-    51857: "Carlos Carvajal Villalobos",
-    59157: "Allan Valenciano Delgado",
-    59683: "Jerlyn Villalobos Morales",
-    50440: "Stanley Araya Arce",
-    59433: "Ronald Vargas Sanchez",
-    56353: "Alfredo Mota Somarriba",
-    50319: "Jesus Eduarte Alvarez",
-    50156: "Marco Alcazar Umaña",
-    52182: "Gerald Corrales castillo",
-    55926: "Juan Montiel sequeira",
-    51417: "Nestor Andrey bustamenta urrutia",
-    54170: "Joel Antonio Gutierrez Obando",
-    54555: "Kevin Inces Cerdas",
-    55501: "Jean Poul Gamboa Campos",
-    59116: "Maureen Ureña Esquivel",
-    58898: "Maria Solis Garcia",
-    52106: "Hellen Ceciliano Campos",
-    55503: "Esteban Brenes Solis",
-    53960: "Jeremy Gonzalez Cersosimo",
-    51918: "Andres castro Gonzalez",
-    51416: "Esteban Armando Brenes Ulate",
-    57713: "EddHAnk Antonio Rodriguez Bryan",
-    59292: "keynor Andree Vargas Mena",
-    54921: "Harold Lopez Cespedes",
+    51417: "Nestor Bustamante",
+    51416: "Esteban Ulate",
+    51918: "Andres Castro",
     59907: "Manfred Zepeda",
-    53990: "Gerson Granados",
-    52106: "EileenCeciliano Campos",
-    56475: "Alexander Navarro",
-    58631: "Alex Segura",
-    20025: "Planta/producción",
-    20254: "Fernando Brizuela",
-    51423: "Esteban Brens Solis",
-    50205: "Hanzel Díaz",
-    50403: "Administrador1"
+    59292: "Keynor Vargas"
 }
 
 # Contenedor del formulario
@@ -89,7 +61,7 @@ with st.container():
             200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
             300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
             400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412,
-            500, "AGENT", "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
+            500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
             "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
         ]
         opcion = st.selectbox("Seleccione una opción de placa", opciones_placa)
@@ -107,7 +79,7 @@ with st.container():
         fecha_lote = st.date_input("Fecha vencimiento del lote")
 
         # Selector de código de empleado
-        valores_selector = list(empleados.keys())
+        valores_selector = [51417, 51416, 51918, 59907, 59292]
         codigo_seleccionado = st.selectbox("Seleccione un código de empleado", valores_selector)
 
         # Campo oculto: nombre del empleado se obtiene automáticamente
