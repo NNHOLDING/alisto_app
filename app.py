@@ -90,7 +90,7 @@ with st.container():
             200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
             300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
             400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412,
-            500, "AGENT", "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
+            500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
             "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
         ]
         opcion = st.selectbox("Seleccione una opción de placa", opciones_placa)
@@ -111,8 +111,9 @@ with st.container():
         valores_selector = list(empleados.keys())
         codigo_seleccionado = st.selectbox("Seleccione un código de empleado", valores_selector)
 
-        # Campo oculto: nombre del empleado se obtiene automáticamente
+        # Mostrar nombre del empleado como texto informativo
         nombre_empleado = empleados.get(codigo_seleccionado, "")
+        st.markdown(f"👤 **Empleado seleccionado:** {nombre_empleado}")
 
         # Campo oculto: descripción vacía
         descripcion = ""
@@ -133,22 +134,4 @@ with st.container():
             st.write(f"📆 Fecha del lote: {fecha_lote}")
             st.write(f"🔢 Código de empleado: {codigo_seleccionado}")
             st.write(f"👤 Nombre de empleado: {nombre_empleado}")
-            st.write(f"🕒 Hora: {hora}")
-
-            guardar_en_google_sheets([
-                str(fecha), placa, numero_orden, codigo, descripcion, cantidad, lote,
-                str(fecha_lote), str(codigo_seleccionado), nombre_empleado, str(hora)
-            ])
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# Footer
-st.markdown(
-    """
-    <hr style="margin-top: 50px; border: none; border-top: 1px solid #ccc;" />
-    <div style="text-align: center; color: gray; font-size: 0.9em; margin-top: 20px;">
-        NN HOLDING SOLUTIONS &copy; 2025, Todos los derechos reservados
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+            st.write
