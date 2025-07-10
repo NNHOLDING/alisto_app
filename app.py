@@ -89,7 +89,7 @@ with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
 
     with st.form("formulario_alisto"):
-        st.subheader("📝 Almacèn Unimar")
+        st.subheader("📝 Almacen Unimar")
 
         col1, col2 = st.columns(2)
         with col1:
