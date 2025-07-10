@@ -39,6 +39,15 @@ now_cr = datetime.now(cr_timezone)
 # Captura del código escaneado desde la URL
 codigo_escaneado = st.query_params.get("codigo", [""])[0]
 
+# Diccionario de empleados
+empleados = {
+    51417: "Nestor Bustamante",
+    51416: "Esteban Ulate",
+    51918: "Andres Castro",
+    59907: "Manfred Zepeda",
+    59292: "Keynor Vargas"
+}
+
 # Contenedor del formulario
 with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
@@ -68,13 +77,18 @@ with st.container():
         cantidad = st.number_input("Cantidad", min_value=1, step=1)
         lote = st.text_input("Lote")
         fecha_lote = st.date_input("Fecha vencimiento del lote")
-        valores_selector = [51417, 51416, 51918, 59907]
-        codigo_seleccionado = st.selectbox("Seleccione código empleado", valores_selector)
-        hora = st.time_input("Hora", value=now_cr.time())
 
-        # Campos ocultos
+        # Selector de código de empleado
+        valores_selector = [51417, 51416, 51918, 59907, 59292]
+        codigo_seleccionado = st.selectbox("Seleccione un código de empleado", valores_selector)
+
+        # Campo oculto: nombre del empleado se obtiene automáticamente
+        nombre_empleado = empleados.get(codigo_seleccionado, "")
+
+        # Campo oculto: descripción vacía
         descripcion = ""
-        nombre_empleado = ""
+
+        hora = st.time_input("Hora", value=now_cr.time())
 
         submit = st.form_submit_button("Guardar")
 
@@ -88,7 +102,8 @@ with st.container():
             st.write(f"📦 Cantidad: {cantidad}")
             st.write(f"🏷️ Lote: {lote}")
             st.write(f"📆 Fecha del lote: {fecha_lote}")
-            st.write(f"🔢 Código adicional seleccionado: {codigo_seleccionado}")
+            st.write(f"🔢 Código de empleado: {codigo_seleccionado}")
+            st.write(f"👤 Nombre de empleado: {nombre_empleado}")
             st.write(f"🕒 Hora: {hora}")
 
             guardar_en_google_sheets([
