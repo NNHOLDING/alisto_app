@@ -107,12 +107,21 @@ with st.container():
         lote = st.text_input("Lote")
         fecha_lote = st.date_input("Fecha vencimiento del lote")
 
-        # Selector de código de empleado
+        # Inicializar estado si no existe
         valores_selector = list(empleados.keys())
-        codigo_seleccionado = st.selectbox("Seleccione un código de empleado", valores_selector)
+        if "codigo_empleado" not in st.session_state:
+            st.session_state.codigo_empleado = valores_selector[0]
 
-        # Mostrar nombre del empleado como texto informativo
-        nombre_empleado = empleados.get(codigo_seleccionado, "")
+        # Selector con actualización automática
+        codigo_seleccionado = st.selectbox(
+            "Seleccione un código de empleado",
+            valores_selector,
+            index=valores_selector.index(st.session_state.codigo_empleado),
+            key="codigo_empleado"
+        )
+
+        # Obtener nombre actualizado
+        nombre_empleado = empleados.get(st.session_state.codigo_empleado, "")
         st.markdown(f"👤 **Empleado seleccionado:** {nombre_empleado}")
 
         # Campo oculto: descripción vacía
@@ -134,4 +143,22 @@ with st.container():
             st.write(f"📆 Fecha del lote: {fecha_lote}")
             st.write(f"🔢 Código de empleado: {codigo_seleccionado}")
             st.write(f"👤 Nombre de empleado: {nombre_empleado}")
-            st.write
+            st.write(f"🕒 Hora: {hora}")
+
+            guardar_en_google_sheets([
+                str(fecha), placa, numero_orden, codigo, descripcion, cantidad, lote,
+                str(fecha_lote), str(codigo_seleccionado), nombre_empleado, str(hora)
+            ])
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Footer
+st.markdown(
+    """
+    <hr style="margin-top: 50px; border: none; border-top: 1px solid #ccc;" />
+    <div style="text-align: center; color: gray; font-size: 0.9em; margin-top: 20px;">
+        NN HOLDING SOLUTIONS &copy; 2025, Todos los derechos reservados
+    </div>
+    """,
+    unsafe_allow_html=True
+)
