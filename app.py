@@ -5,7 +5,7 @@ import gspread
 import socket
 from oauth2client.service_account import ServiceAccountCredentials
 
-# ✅ Función para guardar en Google Sheets
+# ✅ Guardar en Google Sheets
 def guardar_en_google_sheets(datos):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     service_account_info = st.secrets["gcp_service_account"]
@@ -14,7 +14,7 @@ def guardar_en_google_sheets(datos):
     sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit").worksheet("TCertificados")
     sheet.append_row(datos)
 
-# ✅ Función para imprimir etiquetas ZPL en impresora Zebra
+# ✅ Enviar ZPL a impresora Zebra
 def enviar_a_impresora(ip, zpl_data):
     try:
         port = 9100
@@ -84,6 +84,7 @@ opciones_placa = [
 # ✅ Formulario principal
 with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
+
     with st.form("formulario_alisto"):
         st.subheader("📝 Almacén Unimar")
         col1, col2 = st.columns(2)
@@ -128,7 +129,7 @@ with st.container():
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ✅ Pestaña adicional para impresión ZPL
+# ✅ Pestaña de impresión ZPL
 with st.container():
     with st.expander("🖨️ Printer"):
         st.subheader("🖨️ Impresión directa en Zebra")
@@ -140,4 +141,9 @@ with st.container():
 
         if st.button("🖨️ Imprimir etiquetas"):
             exito = True
-            for i in range(cantidad_etiquetas
+            for i in range(cantidad_etiquetas):
+                zpl = (
+                    "^XA\n"
+                    "^PW600\n"
+                    "^LL400\n"
+                   
