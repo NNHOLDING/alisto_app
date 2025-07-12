@@ -128,13 +128,51 @@ with st.sidebar:
     st.header("🧭 Menú")
     opcion_menu = st.selectbox("Seleccione una opción", ["Inicio", "🏷️ Diseñador de etiqueta ZPL"])
 
-# ✅ Contenido del menú de impresión ZPL
-if opcion_menu == "🏷️ Etiqueta Certificado ZPL":
-    st.subheader("🏷️ Etiqueta Certificado ZPL")
+# ✅ Contenido del submenú "Diseñador de etiqueta ZPL"
+if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
+    with st.container():
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.subheader("🏷️ Diseñador de etiqueta ZPL")
 
-    cliente = st.selectbox("🧑 Cliente", ["prueba1", "prueba2", "prueba3", "prueba4"])
-    placa = st.selectbox("🚚 Placa", [201, 202, 203])
-    cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
+        col1, col2 = st.columns(2)
+        with col1:
+            cliente = st.selectbox("🧑 Cliente", ["prueba1", "prueba2", "prueba3", "prueba4"])
+        with col2:
+            placa = st.selectbox("🚚 Placa", [201, 202, 203])
+
+        cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
+        impresora_ip = "192.188.101.118"  # IP de tu impresora Zebra (60SANJOSE)
+
+        if st.button("🖨️ Imprimir etiquetas"):
+            exito = True
+            for i in range(cantidad_etiquetas):
+                zpl = (
+                    "^XA\n"
+                    "^PW600\n"
+                    "^LL400\n"
+                    "^FO50,30^A0N,40,40^FDCliente:^FS\n"
+                    f"^FO250,30^A0N,40,40^FD{cliente}^FS\n"
+                    "^FO50,100^A0N,40,40^FDPlaca:^FS\n"
+                    f"^FO250,100^A0N,40,40^FD{placa}^FS\n"
+                    f"^FO50,170^A0N,40,40^FDEtiqueta {i+1} de {cantidad_etiquetas}^FS\n"
+                    "^XZ\n"
+                )
+                try:
+                    import socket
+                    port = 9100
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as printer_socket:
+                        printer_socket.connect((impresora_ip, port))
+                        printer_socket.send(zpl.encode("utf-8"))
+                    st.write(f"✅ Etiqueta {i+1} enviada correctamente")
+                except Exception as e:
+                    st.error(f"❌ Falló el envío de la etiqueta {i+1}: {e}")
+                    exito = False
+                    break
+
+            if exito:
+                st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra (60SANJOSE - IP: {impresora_ip})")
+
+        st.markdown('</div>', unsafe_allow_html=True)uetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
     impresora_ip = "192.188.101.118"  # IP de la impresora Zebra 60SANJOSE
 
     if st.button("🖨️ Imprimir etiquetas"):
