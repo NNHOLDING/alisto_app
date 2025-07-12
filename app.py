@@ -93,7 +93,7 @@ with st.container():
         nombre_empleado = empleados.get(codigo_seleccionado, "")
         descripcion = ""
 
-                submit = st.form_submit_button("✅ Guardar")
+        submit = st.form_submit_button("✅ Guardar")
 
         if submit:
             # Validación de campos requeridos
