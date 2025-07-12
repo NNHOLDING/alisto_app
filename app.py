@@ -53,7 +53,7 @@ st.markdown("""
 # ✅ Título principal
 st.title("📦 Smart Intelligence Tools")
 
-# ✅ Hora local Costa Rica
+# ✅ Hora local de Costa Rica
 cr_timezone = pytz.timezone("America/Costa_Rica")
 now_cr = datetime.now(cr_timezone)
 
@@ -73,7 +73,7 @@ empleados = {
     20254: "Fernando Brizuela", 51423: "Esteban Brens Solis", 50205: "Hanzel Díaz", 50403: "Administrador1"
 }
 
-# ✅ Opciones de placa
+# ✅ Lista completa de placas
 opciones_placa = [
     200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
     300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
@@ -131,7 +131,7 @@ with st.container():
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ✅ Pestaña adicional para impresión ZPL
+# ✅ Pestaña adicional de impresión
 with st.container():
     with st.expander("🖨️ Printer"):
         st.subheader("🖨️ Impresión directa en Zebra")
@@ -139,3 +139,9 @@ with st.container():
         cliente = st.text_input("👤 Cliente", value="Cliente demo")
         placa_impresion = st.selectbox("🚚 Placa para impresión", opciones_placa)
         cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
+
+        impresora_ip = "192.168.101.119"
+
+        if st.button("🖨️ Imprimir etiquetas"):
+            exito = True
+            for i
