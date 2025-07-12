@@ -152,8 +152,8 @@ with st.container():
                     cantidad,
                     lote,
                     str(fecha_lote),
-                    nombre_empleado,
                     str(codigo_seleccionado),
+                    nombre_empleado,
                     str(hora)
                 ]
                 guardar_en_google_sheets(datos)
