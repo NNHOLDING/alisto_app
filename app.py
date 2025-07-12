@@ -145,17 +145,16 @@ with st.container():
                 # Registro en Google Sheets
                 datos = [
                     str(fecha),
-                        numero_orden,
-                        placa,
-                        codigo,
-                        descripcion, #
-                        
-                        cantidad,
-                        lote,
-                        str(fecha_lote),
-                        nombre_empleado,
-                        str(codigo_seleccionado),
-                        str(hora)
+                    numero_orden,
+                    placa,
+                    codigo,
+                    descripcion,  # ← corregido
+                    cantidad,
+                    lote,
+                    str(fecha_lote),
+                    nombre_empleado,
+                    str(codigo_seleccionado),
+                    str(hora)
                 ]
                 guardar_en_google_sheets(datos)
                 st.toast("✅ Datos enviados correctamente")
