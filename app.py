@@ -5,7 +5,7 @@ import gspread
 import socket
 from oauth2client.service_account import ServiceAccountCredentials
 
-# ✅ Guardar en Google Sheets
+# ✅ Función para guardar datos en Google Sheets
 def guardar_en_google_sheets(datos):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     service_account_info = st.secrets["gcp_service_account"]
@@ -14,7 +14,7 @@ def guardar_en_google_sheets(datos):
     sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit").worksheet("TCertificados")
     sheet.append_row(datos)
 
-# ✅ Enviar ZPL a impresora Zebra
+# ✅ Función para enviar etiquetas ZPL a impresora Zebra
 def enviar_a_impresora(ip, zpl_data):
     try:
         port = 9100
@@ -26,7 +26,7 @@ def enviar_a_impresora(ip, zpl_data):
         st.error(f"❌ Error al imprimir: {e}")
         return False
 
-# ✅ Estilo visual
+# ✅ Estilo personalizado
 st.markdown("""
 <style>
 .form-container {
@@ -50,13 +50,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# ✅ Título principal
 st.title("📦 Smart Intelligence Tools")
 
 # ✅ Hora local Costa Rica
 cr_timezone = pytz.timezone("America/Costa_Rica")
 now_cr = datetime.now(cr_timezone)
 
-# ✅ Código escaneado desde URL
+# ✅ Captura del código escaneado desde la URL
 codigo_escaneado = st.query_params.get("codigo", [""])[0]
 
 # ✅ Diccionario de empleados
@@ -146,4 +147,4 @@ with st.container():
                     "^XA\n"
                     "^PW600\n"
                     "^LL400\n"
-                   
+                    "^FO50,30^A0N,40,40^FDCliente:^FS
