@@ -14,7 +14,7 @@ def guardar_en_google_sheets(datos):
     sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit").worksheet("TCertificados")
     sheet.append_row(datos, value_input_option='USER_ENTERED')
 
-# ✅ Función para enviar ZPL a la impresora
+# ✅ Función para enviar ZPL a la impresora Zebra
 def enviar_a_impresora(ip, zpl_data):
     try:
         port = 9100
@@ -59,12 +59,12 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# 🌎 Hora local y escaneo
+# 🕒 Hora local y código escaneado
 cr_timezone = pytz.timezone("America/Costa_Rica")
 now_cr = datetime.now(cr_timezone)
 codigo_escaneado = st.query_params.get("codigo", [""])[0]
 
-# 👥 Diccionario reducido de empleados
+# 👥 Diccionario de empleados abreviado
 empleados = {
     51857: "Carlos Carvajal",
     59157: "Allan Valenciano",
@@ -73,16 +73,14 @@ empleados = {
 }
 
 # 🖱️ Pestañas
-tab1, tab2, tab3 = st.tabs(["📦 Formulario principal", "🏷️ Generador de etiqueta", "🖨️ Printer"])
+tab1, tab2, tab3 = st.tabs(["📦 Formulario principal", "🏷️ Generador de etiqueta", "🖨️ Impresión directa"])
 
 # 📦 Tab 1: Formulario principal
 with tab1:
     with st.container():
         st.markdown('<div class="form-container">', unsafe_allow_html=True)
-
         with st.form("formulario_alisto"):
             st.subheader("📝 Almacén Unimar")
-
             col1, col2 = st.columns(2)
             with col1:
                 fecha = st.date_input("📅 Fecha", value=now_cr.date())
@@ -104,9 +102,7 @@ with tab1:
             nombre_empleado = empleados.get(codigo_seleccionado, "")
             descripcion = ""
 
-            submit = st.form_submit_button("✅ Guardar")
-
-            if submit:
+            if st.form_submit_button("✅ Guardar"):
                 fila = [
                     fecha.strftime("%Y-%m-%d"),
                     placa,
@@ -133,40 +129,33 @@ with tab1:
                     st.write(f"📆 Fecha lote: {fecha_lote}")
                     st.write(f"👤 Empleado: {nombre_empleado}")
                     st.write(f"🕒 Hora: {hora}")
-
         st.markdown('</div>', unsafe_allow_html=True)
 
-# 🏷️ Tab 2: Generador de etiquetas
+# 🏷️ Tab 2: Generador de etiqueta
 with tab2:
     st.subheader("🏷️ Diseñador de etiqueta ZPL")
-
     cliente = st.selectbox("🧑 Cliente", ["prueba1", "prueba2", "prueba3", "prueba4"])
     placa = st.selectbox("🚚 Placa", [201, 202, 203])
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
+    impresora_ip = "192.168.101.119"
 
     if st.button("🖨️ Imprimir etiquetas"):
-        impresora_ip = "192.168.101.119"
-        etiquetas = []
-        for i in range(cantidad_etiquetas):
-            zpl = f"""
-^XA
-^PW600
-^LL400
-^FO50,30^A0N,40,40^FDCliente:^FS
-^FO250,30^A0N,40,40^FD{cliente}^FS
-^FO50,100^A0N,40,40^FDPlaca:^FS
-^FO250,100^A0N,40,40^FD{placa}^FS
-^FO50,170^A0N,40,40^FDEtiqueta #{i+1}^FS
-^XZ
-"""
-            etiquetas.append(zpl)
-
         exito = True
-        for zpl in etiquetas:
+        for i in range(cantidad_etiquetas):
+            zpl = (
+                "^XA\n"
+                "^PW600\n"
+                "^LL400\n"
+                f"^FO50,30^A0N,40,40^FDCliente:^FS\n"
+                f"^FO250,30^A0N,40,40^FD{cliente}^FS\n"
+                f"^FO50,100^A0N,40,40^FDPlaca:^FS\n"
+                f"^FO250,100^A0N,40,40^FD{placa}^FS\n"
+                f"^FO50,170^A0N,40,40^FDEtiqueta #{i+1}^FS\n"
+                "^XZ"
+            )
             if not enviar_a_impresora(impresora_ip, zpl):
                 exito = False
                 break
-
         if exito:
             st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra ({impresora_ip})")
         else:
@@ -175,21 +164,18 @@ with tab2:
 # 🖨️ Tab 3: Impresión directa
 with tab3:
     st.subheader("🖨️ Impresión directa")
-
     cliente = st.text_input("👤 Cliente", value="Cliente demo")
     placa = st.text_input("🚚 Placa", value="201")
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1, value=1)
     impresora_ip = "192.168.101.119"
 
     if st.button("🖨️ Enviar etiquetas a impresora"):
-        etiquetas = []
+        exito = True
         for i in range(cantidad_etiquetas):
-            zpl = f"""
-^XA
-^PW600
-^LL400
-^FO50,30^A0N,40,40^FDCliente:^FS
-^FO250,30^A0N,40,40^FD{cliente}^FS
-^FO50,100^A0N,40,40^FDPlaca:^FS
-^FO250,100^A0N,40,40^FD{placa}^FS
-^FO50,170^
+            zpl = (
+                "^XA\n"
+                "^PW600\n"
+                "^LL400\n"
+                f"^FO50,30^A0N,40,40^FDCliente:^FS\n"
+                f"^FO250,30^A0N,40,40^FD{cliente}^FS\n"
+                f"^FO50,100^A0N,
