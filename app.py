@@ -145,9 +145,10 @@ with st.container():
                 # Registro en Google Sheets
                 datos = [
                     str(fecha),
-                        placa,
                         numero_orden,
+                        placa,
                         codigo,
+                        Descripcion,
                         cantidad,
                         lote,
                         str(fecha_lote),
