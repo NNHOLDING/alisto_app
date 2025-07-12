@@ -136,9 +136,9 @@ if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
 
         col1, col2 = st.columns(2)
         with col1:
-            cliente = st.selectbox("🧑 Cliente", ["prueba1", "prueba2", "prueba3", "prueba4"])
+            cliente = st.selectbox("🧑 Cliente", ["prueba1", "COMPAN", "MAFAM", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI", "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS", "prueba4", "prueba4", "prueba4", "prueba4", "prueba4", "prueba4", "prueba4", "prueba4", "prueba4", "prueba4", "prueba4", "prueba4", "prueba4", "prueba4", "prueba4"])
         with col2:
-            placa = st.selectbox("🚚 Placa", [201, 202, 203])
+            placa = st.selectbox("🚚 Placa", [201, 202, 203, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM", "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"])
 
         cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
         impresora_ip = "192.188.101.118"  # IP de tu impresora Zebra (60SANJOSE)
