@@ -178,4 +178,17 @@ with tab3:
                 "^LL400\n"
                 f"^FO50,30^A0N,40,40^FDCliente:^FS\n"
                 f"^FO250,30^A0N,40,40^FD{cliente}^FS\n"
-                f"^FO50,100^A0N,40,40^FDPlaca:^
+                f"^FO50,100^A0N,40,40^FDPlaca:^FS\n"
+                f"^FO250,100^A0N,40,40^FD{placa}^FS\n"
+                f"^FO50,170^A0N,40,40^FDEtiqueta #{i+1}^FS\n"
+                "^XZ"
+            )
+
+            if not enviar_a_impresora(impresora_ip, zpl):
+                exito = False
+                break
+
+        if exito:
+            st.success(f"✅ {cantidad_etiquetas} etiquetas enviadas a la impresora ({impresora_ip})")
+        else:
+            st.error("❌ Error al imprimir etiquetas.")
