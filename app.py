@@ -137,7 +137,4 @@ if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
 
     if st.button("🖨️ Enviar a impresora Zebra"):
-        # Aquí puedes colocar tu lógica real de impresión
         st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas de {cliente} a la impresora Zebra (60SANJOSE - IP: 192.188.101.118)")
-</div>
-""", unsafe_allow_html=True)
