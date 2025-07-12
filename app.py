@@ -50,14 +50,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ✅ Título principal
+# ✅ Título
 st.title("📦 Smart Intelligence Tools")
 
-# ✅ Hora local Costa Rica
+# ✅ Hora local de Costa Rica
 cr_timezone = pytz.timezone("America/Costa_Rica")
 now_cr = datetime.now(cr_timezone)
 
-# ✅ Captura del código escaneado desde URL
+# ✅ Captura del código escaneado desde la URL
 codigo_escaneado = st.query_params.get("codigo", [""])[0]
 
 # ✅ Diccionario de empleados
@@ -73,7 +73,7 @@ empleados = {
     20254: "Fernando Brizuela", 51423: "Esteban Brens Solis", 50205: "Hanzel Díaz", 50403: "Administrador1"
 }
 
-# ✅ Opciones de placa
+# ✅ Lista completa de placas
 opciones_placa = [
     200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
     300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
@@ -82,7 +82,7 @@ opciones_placa = [
     "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
 ]
 
-# ✅ Formulario principal
+# ✅ Contenedor del formulario principal
 with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
 
@@ -140,13 +140,4 @@ with st.container():
         placa_impresion = st.selectbox("🚚 Placa para impresión", opciones_placa)
         cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
 
-        impresora_ip = "192.168.101.119"
-
-        if st.button("🖨️ Imprimir etiquetas"):
-            exito = True
-            for i in range(cantidad_etiquetas):
-                zpl = (
-                    "^XA\n"
-                    "^PW600\n"
-                    "^LL400\n"
-                    "^FO50,30^A0N,40,40^FDCliente:^
+        impresora_ip = "192.168.101.119
