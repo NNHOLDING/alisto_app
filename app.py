@@ -5,7 +5,7 @@ import gspread
 import socket
 from oauth2client.service_account import ServiceAccountCredentials
 
-# ✅ Guardar en Google Sheets
+# ✅ Función para guardar en Google Sheets
 def guardar_en_google_sheets(datos):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     service_account_info = st.secrets["gcp_service_account"]
@@ -14,7 +14,7 @@ def guardar_en_google_sheets(datos):
     sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit").worksheet("TCertificados")
     sheet.append_row(datos)
 
-# ✅ Imprimir ZPL en impresora Zebra por IP
+# ✅ Enviar datos ZPL a impresora Zebra por IP
 def enviar_a_impresora(ip, zpl_data):
     try:
         port = 9100
@@ -26,7 +26,7 @@ def enviar_a_impresora(ip, zpl_data):
         st.error(f"❌ Error al imprimir: {e}")
         return False
 
-# ✅ Estilos
+# ✅ Estilo visual
 st.markdown("""
 <style>
 .form-container {
@@ -50,14 +50,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ✅ Título
+# ✅ Encabezado
 st.title("📦 Smart Intelligence Tools")
 
-# ✅ Hora local
+# ✅ Hora local Costa Rica
 cr_timezone = pytz.timezone("America/Costa_Rica")
 now_cr = datetime.now(cr_timezone)
 
-# ✅ Código desde la URL
+# ✅ Captura del código escaneado desde la URL
 codigo_escaneado = st.query_params.get("codigo", [""])[0]
 
 # ✅ Diccionario de empleados
@@ -127,7 +127,7 @@ with st.container():
                 st.write(f"🕒 Hora: {hora}")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ✅ Pestaña de impresión ZPL
+# ✅ Pestaña “🖨️ Printer”
 with st.container():
     with st.expander("🖨️ Printer"):
         st.subheader("🖨️ Impresión directa en Zebra")
@@ -137,4 +137,8 @@ with st.container():
         cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
         impresora_ip = "192.168.101.119"
 
-        if st.button("🖨️ Imprimir etiquetas
+        if st.button("🖨️ Imprimir etiquetas"):
+            exito = True
+            for i in range(cantidad_etiquetas):
+                zpl = (
+                    "^
