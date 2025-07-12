@@ -5,7 +5,7 @@ import gspread
 import socket
 from oauth2client.service_account import ServiceAccountCredentials
 
-# ✅ Función para guardar datos en Google Sheets
+# ✅ Función para guardar en Google Sheets
 def guardar_en_google_sheets(datos):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     service_account_info = st.secrets["gcp_service_account"]
@@ -14,7 +14,7 @@ def guardar_en_google_sheets(datos):
     sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit").worksheet("TCertificados")
     sheet.append_row(datos)
 
-# ✅ Función para enviar ZPL a impresora Zebra
+# ✅ Función para imprimir etiquetas ZPL en impresora Zebra
 def enviar_a_impresora(ip, zpl_data):
     try:
         port = 9100
@@ -26,7 +26,7 @@ def enviar_a_impresora(ip, zpl_data):
         st.error(f"❌ Error al imprimir: {e}")
         return False
 
-# ✅ Estilo personalizado
+# ✅ Estilo visual
 st.markdown("""
 <style>
 .form-container {
@@ -52,23 +52,23 @@ st.markdown("""
 
 st.title("📦 Smart Intelligence Tools")
 
-# ✅ Hora local en Costa Rica
+# ✅ Hora local Costa Rica
 cr_timezone = pytz.timezone("America/Costa_Rica")
 now_cr = datetime.now(cr_timezone)
 
-# ✅ Obtener código desde URL
+# ✅ Código escaneado desde URL
 codigo_escaneado = st.query_params.get("codigo", [""])[0]
 
 # ✅ Diccionario de empleados
 empleados = {
     51857: "Carlos Carvajal Villalobos", 59157: "Allan Valenciano Delgado", 59683: "Jerlyn Villalobos Morales",
     50440: "Stanley Araya Arce", 59433: "Ronald Vargas Sanchez", 56353: "Alfredo Mota Somarriba", 50319: "Jesus Eduarte Alvarez",
-    50156: "Marco Alcazar Umaña", 52182: "Gerald Corrales castillo", 55926: "Juan Montiel sequeira", 51417: "Nestor Andrey bustamenta urrutia",
+    50156: "Marco Alcazar Umaña", 52182: "Gerald Corrales Castillo", 55926: "Juan Montiel Sequeira", 51417: "Nestor Andrey Bustamante Urrutia",
     54170: "Joel Antonio Gutierrez Obando", 54555: "Kevin Inces Cerdas", 55501: "Jean Poul Gamboa Campos", 59116: "Maureen Ureña Esquivel",
     58898: "Maria Solis Garcia", 52106: "Hellen Ceciliano Campos", 55503: "Esteban Brenes Solis", 53960: "Jeremy Gonzalez Cersosimo",
-    51918: "Andres castro Gonzalez", 51416: "Esteban Armando Brenes Ulate", 57713: "EddHAnk Antonio Rodriguez Bryan",
-    59292: "keynor Andree Vargas Mena", 54921: "Harold Lopez Cespedes", 59907: "Manfred Zepeda", 53990: "Gerson Granados",
-    52106: "EileenCeciliano Campos", 56475: "Alexander Navarro", 58631: "Alex Segura", 20025: "Planta/producción",
+    51918: "Andres Castro Gonzalez", 51416: "Esteban Armando Brenes Ulate", 57713: "EddHAnk Antonio Rodriguez Bryan",
+    59292: "Keynor Andree Vargas Mena", 54921: "Harold Lopez Cespedes", 59907: "Manfred Zepeda", 53990: "Gerson Granados",
+    52106: "Eileen Ceciliano Campos", 56475: "Alexander Navarro", 58631: "Alex Segura", 20025: "Planta/producción",
     20254: "Fernando Brizuela", 51423: "Esteban Brens Solis", 50205: "Hanzel Díaz", 50403: "Administrador1"
 }
 
@@ -84,7 +84,6 @@ opciones_placa = [
 # ✅ Formulario principal
 with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
-
     with st.form("formulario_alisto"):
         st.subheader("📝 Almacén Unimar")
         col1, col2 = st.columns(2)
@@ -141,7 +140,4 @@ with st.container():
 
         if st.button("🖨️ Imprimir etiquetas"):
             exito = True
-            for i in range(cantidad_etiquetas):
-                zpl = (
-                    "^XA\n"
-                    "^PW600\n
+            for i in range(cantidad_etiquetas
