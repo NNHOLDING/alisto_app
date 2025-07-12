@@ -122,3 +122,22 @@ st.markdown("""
     NN HOLDING SOLUTIONS &copy; 2025, Todos los derechos reservados
 </div>
 """, unsafe_allow_html=True)
+
+# ✅ Menú lateral izquierdo
+with st.sidebar:
+    st.header("🧭 Menú")
+    opcion_menu = st.selectbox("Seleccione una opción", ["Inicio", "🏷️ Diseñador de etiqueta ZPL"])
+
+# ✅ Contenido del menú de impresión
+if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
+    st.subheader("🏷️ Diseñador de etiqueta ZPL")
+
+    cliente = st.selectbox("🧑 Cliente", ["prueba1", "prueba2", "prueba3", "prueba4"])
+    placa_zpl = st.selectbox("🚚 Placa", [201, 202, 203])
+    cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
+
+    if st.button("🖨️ Enviar a impresora Zebra"):
+        # Aquí puedes colocar tu lógica real de impresión
+        st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas de {cliente} a la impresora Zebra (60SANJOSE - IP: 192.188.101.118)")
+</div>
+""", unsafe_allow_html=True)
