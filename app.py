@@ -93,26 +93,53 @@ with st.container():
         nombre_empleado = empleados.get(codigo_seleccionado, "")
         descripcion = ""
 
-        submit = st.form_submit_button("✅ Guardar")
+                submit = st.form_submit_button("✅ Guardar")
 
         if submit:
-            guardar_en_google_sheets([
-                str(fecha), placa, numero_orden, codigo, descripcion, cantidad, lote,
-                str(fecha_lote), str(codigo_seleccionado), nombre_empleado, str(hora)
-            ])
-            st.toast("✅ Datos enviados correctamente")
-            st.success("Datos guardados con éxito.")
-            with st.expander("📋 Ver resumen de datos ingresados"):
-                st.write(f"📅 Fecha: {fecha}")
-                st.write(f"🚚 Placa: {placa}")
-                st.write(f"🧾 Número de orden: {numero_orden}")
-                st.write(f"🔍 Código: {codigo}")
-                st.write(f"📦 Cantidad: {cantidad}")
-                st.write(f"🏷️ Lote: {lote}")
-                st.write(f"📆 Fecha del lote: {fecha_lote}")
-                st.write(f"👤 Empleado: {nombre_empleado} ({codigo_seleccionado})")
-                st.write(f"🕒 Hora: {hora}")
+            # Validación de campos requeridos
+            errores = []
 
+            if not placa:
+                errores.append("🚫 La placa no puede estar vacía.")
+            if not lote:
+                errores.append("🚫 El lote no puede estar vacío.")
+            if not codigo:
+                errores.append("🚫 El código escaneado no puede estar vacío.")
+            if cantidad <= 0:
+                errores.append("🚫 La cantidad debe ser mayor a cero.")
+
+            if errores:
+                for error in errores:
+                    st.error(error)
+                st.warning("❗ Corrige los errores antes de continuar.")
+            else:
+                # Registro en Google Sheets
+                datos = [
+                    str(fecha),
+                    lote,
+                    placa,
+                    int(codigo_seleccionado),
+                    codigo,
+                    cantidad,
+                    str(fecha_lote),
+                    nombre_empleado,
+                    str(hora)
+                ]
+                guardar_en_google_sheets(datos)
+                st.toast("✅ Datos enviados correctamente")
+                st.success("Datos guardados con éxito.")
+
+                # Mostrar resumen
+                with st.expander("📋 Ver resumen de datos ingresados"):
+                    st.write(f"📅 Fecha: {fecha}")
+                    st.write(f"🏷️ Lote: {lote}")
+                    st.write(f"🚚 Placa: {placa}")
+                    st.write(f"👤 Código empleado: {codigo_seleccionado}")
+                    st.write(f"🔍 Código escaneado: {codigo}")
+                    st.write(f"📦 Cantidad: {cantidad}")
+                    st.write(f"📆 Fecha del lote: {fecha_lote}")
+                    st.write(f"👤 Empleado: {nombre_empleado}")
+                    st.write(f"🕒 Hora: {hora}")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # Footer
