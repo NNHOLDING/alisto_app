@@ -26,7 +26,7 @@ def enviar_a_impresora(ip, zpl_data):
         st.error(f"❌ Error al imprimir: {e}")
         return False
 
-# ✅ Estilos personalizados
+# ✅ Estilo personalizado
 st.markdown("""
 <style>
 .form-container {
@@ -50,14 +50,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ✅ Título principal
 st.title("📦 Smart Intelligence Tools")
 
-# ✅ Hora local de Costa Rica
+# ✅ Hora local en Costa Rica
 cr_timezone = pytz.timezone("America/Costa_Rica")
 now_cr = datetime.now(cr_timezone)
 
-# ✅ Captura del código escaneado desde URL
+# ✅ Obtener código desde URL
 codigo_escaneado = st.query_params.get("codigo", [""])[0]
 
 # ✅ Diccionario de empleados
@@ -85,6 +84,7 @@ opciones_placa = [
 # ✅ Formulario principal
 with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
+
     with st.form("formulario_alisto"):
         st.subheader("📝 Almacén Unimar")
         col1, col2 = st.columns(2)
@@ -126,9 +126,10 @@ with st.container():
                 st.write(f"📆 Fecha del lote: {fecha_lote}")
                 st.write(f"👤 Empleado: {nombre_empleado} ({codigo_seleccionado})")
                 st.write(f"🕒 Hora: {hora}")
+
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ✅ Pestaña de impresión Zebra
+# ✅ Pestaña adicional para impresión ZPL
 with st.container():
     with st.expander("🖨️ Printer"):
         st.subheader("🖨️ Impresión directa en Zebra")
@@ -141,4 +142,6 @@ with st.container():
         if st.button("🖨️ Imprimir etiquetas"):
             exito = True
             for i in range(cantidad_etiquetas):
-                zpl =
+                zpl = (
+                    "^XA\n"
+                    "^PW600\n
