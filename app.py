@@ -148,7 +148,7 @@ with st.container():
                         numero_orden,
                         placa,
                         codigo,
-                        Descripcion,
+                        descripcion,
                         cantidad,
                         lote,
                         str(fecha_lote),
