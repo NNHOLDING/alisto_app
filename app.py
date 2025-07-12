@@ -120,7 +120,7 @@ with st.container():
         # Selector de código de empleado
         codigo_seleccionado = st.selectbox("👤 Seleccione un código de empleado", list(empleados.keys()))
         nombre_empleado = empleados.get(codigo_seleccionado, "")
-        descripcion = ""
+        descripcion = "" # campo oculto
 
         submit = st.form_submit_button("✅ Guardar")
 
@@ -148,7 +148,8 @@ with st.container():
                         numero_orden,
                         placa,
                         codigo,
-                        descripcion,
+                        descripcion, #
+                        
                         cantidad,
                         lote,
                         str(fecha_lote),
