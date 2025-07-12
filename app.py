@@ -5,7 +5,7 @@ import gspread
 import socket
 from oauth2client.service_account import ServiceAccountCredentials
 
-# ✅ Función para guardar datos en Google Sheets
+# ✅ Guardar datos en Google Sheets
 def guardar_en_google_sheets(datos):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     service_account_info = st.secrets["gcp_service_account"]
@@ -14,13 +14,13 @@ def guardar_en_google_sheets(datos):
     sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit").worksheet("TCertificados")
     sheet.append_row(datos)
 
-# ✅ Función para enviar ZPL a impresora Zebra
+# ✅ Enviar etiquetas ZPL por socket
 def enviar_a_impresora(ip, zpl_data):
     try:
         port = 9100
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as printer_socket:
             printer_socket.connect((ip, port))
-            printer_socket.send(zpl_data.encode('utf-8'))
+            printer_socket.send(zpl_data.encode("utf-8"))
         return True
     except Exception as e:
         st.error(f"❌ Error al imprimir: {e}")
@@ -82,7 +82,7 @@ opciones_placa = [
     "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
 ]
 
-# ✅ Formulario principal
+# ✅ Contenedor del formulario principal
 with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
 
@@ -131,7 +131,7 @@ with st.container():
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ✅ Pestaña de impresión ZPL
+# ✅ Pestaña adicional para impresión ZPL
 with st.container():
     with st.expander("🖨️ Printer"):
         st.subheader("🖨️ Impresión directa en Zebra")
@@ -139,6 +139,10 @@ with st.container():
         cliente = st.text_input("👤 Cliente", value="Cliente demo")
         placa_impresion = st.selectbox("🚚 Placa para impresión", opciones_placa)
         cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
+
         impresora_ip = "192.168.101.119"
 
-        if st
+        if st.button("🖨️ Imprimir etiquetas"):
+            exito = True
+            for i in range(cantidad_etiquetas):
+                zpl =
