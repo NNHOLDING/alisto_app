@@ -5,7 +5,7 @@ import gspread
 import socket
 from oauth2client.service_account import ServiceAccountCredentials
 
-# ✅ Función para guardar en Google Sheets
+# ✅ Función para guardar datos en Google Sheets
 def guardar_en_google_sheets(datos):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     service_account_info = st.secrets["gcp_service_account"]
@@ -14,7 +14,7 @@ def guardar_en_google_sheets(datos):
     sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit").worksheet("TCertificados")
     sheet.append_row(datos)
 
-# ✅ Enviar datos ZPL a impresora Zebra por IP
+# ✅ Función para enviar ZPL a impresora Zebra
 def enviar_a_impresora(ip, zpl_data):
     try:
         port = 9100
@@ -26,7 +26,7 @@ def enviar_a_impresora(ip, zpl_data):
         st.error(f"❌ Error al imprimir: {e}")
         return False
 
-# ✅ Estilo visual
+# ✅ Estilos personalizados
 st.markdown("""
 <style>
 .form-container {
@@ -50,14 +50,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ✅ Encabezado
+# ✅ Título principal
 st.title("📦 Smart Intelligence Tools")
 
-# ✅ Hora local Costa Rica
+# ✅ Hora local de Costa Rica
 cr_timezone = pytz.timezone("America/Costa_Rica")
 now_cr = datetime.now(cr_timezone)
 
-# ✅ Captura del código escaneado desde la URL
+# ✅ Captura del código escaneado desde URL
 codigo_escaneado = st.query_params.get("codigo", [""])[0]
 
 # ✅ Diccionario de empleados
@@ -106,6 +106,7 @@ with st.container():
         codigo_seleccionado = st.selectbox("👤 Seleccione un código de empleado", list(empleados.keys()))
         nombre_empleado = empleados.get(codigo_seleccionado, "")
         descripcion = ""
+
         submit = st.form_submit_button("✅ Guardar")
 
         if submit:
@@ -127,7 +128,7 @@ with st.container():
                 st.write(f"🕒 Hora: {hora}")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ✅ Pestaña “🖨️ Printer”
+# ✅ Pestaña de impresión Zebra
 with st.container():
     with st.expander("🖨️ Printer"):
         st.subheader("🖨️ Impresión directa en Zebra")
@@ -140,5 +141,4 @@ with st.container():
         if st.button("🖨️ Imprimir etiquetas"):
             exito = True
             for i in range(cantidad_etiquetas):
-                zpl = (
-                    "^
+                zpl =
