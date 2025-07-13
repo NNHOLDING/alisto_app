@@ -182,37 +182,48 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ✅ Menú lateral izquierdo
+# ✅ Menú lateral izquierdo
 with st.sidebar:
     st.header("🧭 Menú")
     opcion_menu = st.selectbox("Seleccione una opción", ["Inicio", "🏷️ Diseñador de etiqueta ZPL"])
 
-# ✅ Contenido del submenú "Diseñador de etiqueta ZPL"
+# 🔁 Diccionario de impresoras con su IP real
+impresoras = {
+    "60SANJOSE": "192.168.101.119",  # ← actualiza si cambia
+    "PLANTA2": "192.168.101.11",
+    "ALMACEN1": "192.168.101.12"
+}
+
+# ✅ Nuevo submenú ZPL con manejo de impresora escaneada
 if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
-    with st.container():
-        st.markdown('<div class="form-container">', unsafe_allow_html=True)
-        st.subheader("🏷️ Diseñador de etiqueta ZPL")
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.subheader("🏷️ Diseñador de etiqueta ZPL")
 
-        col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2)
 
-        with col1:
-            cliente = st.selectbox("🧑 Cliente", [
-                "prueba1", "COMPAN", "MAFAM", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
-                "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS"
-            ])
+    with col1:
+        cliente = st.selectbox("🧑 Cliente", [
+            "prueba1", "COMPAN", "MAFAM", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
+            "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS"
+        ])
 
-        with col2:
-            placa = st.selectbox("🚚 Placa", [
-                201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
-                300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
-                400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 500,
-                "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
-                "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
-            ])
+    with col2:
+        placa = st.selectbox("🚚 Placa", [
+            201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
+            300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
+            400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 500,
+            "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
+            "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
+        ])
 
-        cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
-        impresora_ip = "192.188.101.118"  # IP de la impresora Zebra (60SANJOSE)
+    cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
 
-        if st.button("🖨️ Imprimir etiquetas"):
+    nombre_impresora = st.text_input("📷 Escanee el QR (nombre de la impresora)")
+    impresora_ip = impresoras.get(nombre_impresora.strip())
+
+    if nombre_impresora:
+        if impresora_ip:
+            st.success(f"🖨️ Impresora detectada: {nombre_impresora} → IP {impresora_ip}")
             exito = True
             for i in range(cantidad_etiquetas):
                 zpl = (
@@ -227,9 +238,9 @@ if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
                     "^XZ\n"
                 )
                 try:
-                    import socket
                     port = 9100
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as printer_socket:
+                        printer_socket.settimeout(3)  # ⏱️ evita cuelgue por falta de conexión
                         printer_socket.connect((impresora_ip, port))
                         printer_socket.send(zpl.encode("utf-8"))
                     st.write(f"✅ Etiqueta {i+1} enviada correctamente")
@@ -239,6 +250,8 @@ if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
                     break
 
             if exito:
-                st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra (60SANJOSE - IP: {impresora_ip})")
+                st.success(f"🎉 Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra ({nombre_impresora})")
+        else:
+            st.error("❌ Nombre de impresora no reconocido. Verifica el QR o actualiza el diccionario.")
 
-        st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
