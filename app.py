@@ -228,7 +228,7 @@ if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
                 )
                 try:
                     import socket
-                    port = 9100
+                    port = 6101
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as printer_socket:
                         printer_socket.connect((impresora_ip, port))
                         printer_socket.send(zpl.encode("utf-8"))
