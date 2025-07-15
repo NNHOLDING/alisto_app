@@ -196,8 +196,8 @@ if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
 
         with col1:
             cliente = st.selectbox("🧑 Cliente", [
-                "prueba1", "COMPAN", "MAFAM", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
-                "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS"
+                "prueba1", "COMAPAN", "MAFAM", "DEMASA", "PANIFICADORA ZULIGA", "PEDRO FABIAN", "PANIFICADORA LEANDRO", "AUTODELI", "SUR QUEMICA", "POZUELO", "FMS FOOD MANUFACTURING", "PURATOS", "LOS PATITOS", "DOS PINOS", "ESCULTURA DE JADE", "YAM PAI", "KATIA MARIA VARGAS", "COMPAÑIA LEE QUIROS", "UNIVERSAL DE ALIMENTOS", "COMPAN", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
+                "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS CENTROAMERICA"
             ])
 
         with col2:
