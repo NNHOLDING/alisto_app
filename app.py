@@ -104,7 +104,7 @@ with st.container():
                 300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
                 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412,
                 500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
-                "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
+                "WALMART", "MEGASUPER", "GESSA", "AGENT", "MAFAM", "DEMASA", "LOS PATITOS", "WALMART", "PRICESMART", "AUTODELI", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
             ]
             opcion = st.selectbox("🚚 Seleccione una opción de placa", opciones_placa)
             placa = st.text_input("🔢 Placa", value=str(opcion))
@@ -221,9 +221,12 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
         ])
     with col2:
         placa = st.selectbox("🚚 Placa", [
-            201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215,
-            "SIGMA", "POZUELO", "COMAPAN", "UNIVERSAL ALIMENTOS", "HILLTOP", "WALMART"
-        ])
+                200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
+                300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
+                400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412,
+                500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
+                "WALMART", "MEGASUPER", "GESSA", "AGENT", "MAFAM", "DEMASA", "LOS PATITOS", "WALMART", "PRICESMART", "AUTODELI", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
+            ]
 
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
 
