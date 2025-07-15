@@ -205,8 +205,8 @@ with st.sidebar:
 
 # 🏠 INICIO
 if opcion_menu == "Inicio":
-    st.title("🏠 Bienvenido a Smart Intelligence Tools")
-    st.info("Selecciona una herramienta desde el menú lateral para comenzar.")
+    st.title("NN HOLDING SOLUTIONS")
+    st.info(" ")
 
 # 📷 ESCÁNER
 elif opcion_menu == "📷 Escáner de impresora (cámara)":
