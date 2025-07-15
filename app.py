@@ -255,15 +255,14 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
 
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
 
-    ip_actual = st.session_state.get("nombre_impresora_qr", "")
-    nueva_ip = st.text_input("🖨️ IP de la impresora", value=ip_actual)
+    # 🔄 Actualiza la IP escaneada si es nueva
+    ip_qr = st.session_state.get("component_value", "")
+    if ip_qr and ip_qr != st.session_state["nombre_impresora_qr"]:
+        st.session_state["nombre_impresora_qr"] = ip_qr
 
-    if nueva_ip != ip_actual:
-        st.session_state["nombre_impresora_qr"] = nueva_ip
+    ip_impresora = st.text_input("🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"])
 
-    ip_impresora = st.session_state["nombre_impresora_qr"]
-
-    # ✅ Activar lector QR con botón
+    # 🔘 Botón para activar lector QR
     activar_lector = st.button("📷 Escanear código QR de impresora")
 
     if activar_lector:
@@ -276,7 +275,7 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
             function sendToStreamlit(text) {
                 if (lectorActivo) {
                     window.parent.postMessage({type: "streamlit:setComponentValue", value: text}, "*");
-                    document.getElementById("reader").remove();  // 🛑 Cierra el lector
+                    document.getElementById("reader").remove();
                     lectorActivo = false;
                     let mensaje = document.createElement("p");
                     mensaje.innerHTML = "✅ Escaneado: " + text;
@@ -293,12 +292,7 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
             </script>
         """, height=550)
 
-    ip_qr = st.session_state.get("component_value", "")
-    if ip_qr and ip_qr != st.session_state["nombre_impresora_qr"]:
-        st.session_state["nombre_impresora_qr"] = ip_qr
-        st.success(f"✅ IP escaneada asignada: {ip_qr}")
-
-    # 🔘 Validación + impresión
+    # ✅ Validar IP y enviar etiquetas
     if st.button("🖨️ Imprimir etiquetas"):
         if ip_impresora not in ips_impresoras_validas:
             st.error("❌ La IP no es válida. Verifica o escanea una impresora autorizada.")
@@ -327,7 +321,6 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
                     st.error(f"❌ Falló el envío de la etiqueta {i+1}: {e}")
                     exito = False
                     break
-
             if exito:
                 st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora ({ip_impresora})")
 
