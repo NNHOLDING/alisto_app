@@ -210,7 +210,7 @@ if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
             ])
 
         cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
-        impresora_ip = "192.188.101.118"  # IP de la impresora Zebra (60SANJOSE)
+        impresora_ip = "192.168.34.10"  # IP de la impresora Zebra (60SANJOSE)
 
         if st.button("🖨️ Imprimir etiquetas"):
             exito = True
