@@ -226,7 +226,7 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
                 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412,
                 500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
                 "WALMART", "MEGASUPER", "GESSA", "AGENT", "MAFAM", "DEMASA", "LOS PATITOS", "WALMART", "PRICESMART", "AUTODELI", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
-            ]
+                ]
 
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
 
