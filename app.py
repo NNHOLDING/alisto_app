@@ -215,7 +215,7 @@ def cargar_historial_certificados():
     return df
 
 # ✅ Contenido del submenú "Historial de Certificados"
-elif opcion_menu == "📊 Historial de Certificados":
+if opcion_menu == "📊 Historial de Certificados":
     st.subheader("📊 Historial de Certificados")
 
     try:
