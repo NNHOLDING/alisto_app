@@ -181,123 +181,153 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 📦 Inicializar estado del valor escaneado
+import streamlit.components.v1 as components
+
+# 📦 Inicializar estado de navegación y escaneo
+if "menu_seleccionado" not in st.session_state:
+    st.session_state["menu_seleccionado"] = "🏠 Inicio"
 if "nombre_impresora_qr" not in st.session_state:
     st.session_state["nombre_impresora_qr"] = ""
 
-# ✅ Menú lateral con icono de hamburguesa
+# ✅ Menú hamburguesa lateral profesional
 with st.sidebar:
     st.markdown("""
     <style>
-        .hamburger {
+        .hamburger-menu {
             font-size: 30px;
-            cursor: pointer;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .sidebar-header {
             text-align: center;
-            font-weight: bold;
-            font-size: 20px;
-            padding: 10px 0;
+            cursor: pointer;
+            padding: 10px;
+        }
+        .menu-opciones {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 15px;
+        }
+        .menu-opciones button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .menu-opciones button:hover {
+            background-color: #45a049;
         }
     </style>
+
+    <div class="hamburger-menu" onclick="document.getElementById('opciones').style.display='flex'">☰</div>
+    <div id="opciones" class="menu-opciones" style="display:none;">
+        <button onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: '🏠 Inicio'}, '*')">🏠 Inicio</button>
+        <button onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: '🏷️ Diseñador de etiqueta ZPL'}, '*')">🏷️ Diseñador de etiqueta ZPL</button>
+        <button onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: '📷 Escáner de impresora (cámara)'}, '*')">📷 Escáner de impresora (cámara)</button>
+    </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="hamburger">☰</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-header">🧭 Menú Principal</div>', unsafe_allow_html=True)
-
-    opcion_menu = st.selectbox("Seleccione una opción", [
-        "🏠 Inicio",
-        "🏷️ Diseñador de etiqueta ZPL",
-        "📷 Escáner de impresora (cámara)"
-    ])
-
-# ✅ Contenido: Diseñador de etiqueta ZPL
-if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
-    with st.container():
-        st.markdown('<div class="form-container">', unsafe_allow_html=True)
-        st.subheader("🏷️ Diseñador de Etiquetas ZPL")
-
-        col1, col2 = st.columns(2)
-        with col1:
-            cliente = st.selectbox("🧑 Cliente", [
-                "prueba1", "COMPAN", "MAFAM", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
-                "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS"
-            ])
-        with col2:
-            placa = st.selectbox("🚚 Placa", [
-                201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
-                300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
-                400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 500,
-                "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
-                "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
-            ])
-
-        cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
-        impresora_ip = st.text_input("🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"])
-
-        if st.button("🖨️ Imprimir etiquetas"):
-            exito = True
-            for i in range(cantidad_etiquetas):
-                zpl = (
-                    "^XA\n"
-                    "^PW600\n"
-                    "^LL400\n"
-                    "^FO50,30^A0N,40,40^FDCliente:^FS\n"
-                    f"^FO250,30^A0N,40,40^FD{cliente}^FS\n"
-                    "^FO50,100^A0N,40,40^FDPlaca:^FS\n"
-                    f"^FO250,100^A0N,40,40^FD{placa}^FS\n"
-                    f"^FO50,170^A0N,40,40^FDEtiqueta {i+1} de {cantidad_etiquetas}^FS\n"
-                    "^XZ\n"
-                )
-                try:
-                    import socket
-                    port = 9100
-                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as printer_socket:
-                        printer_socket.connect((impresora_ip, port))
-                        printer_socket.send(zpl.encode("utf-8"))
-                    st.write(f"✅ Etiqueta {i+1} enviada correctamente")
-                except Exception as e:
-                    st.error(f"❌ Falló el envío de la etiqueta {i+1}: {e}")
-                    exito = False
-                    break
-
-            if exito:
-                st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra ({impresora_ip})")
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-# ✅ Escáner QR con cámara integrado
-if opcion_menu == "📷 Escáner de impresora (cámara)":
-    with st.container():
-        st.markdown('<div class="form-container">', unsafe_allow_html=True)
-        st.subheader("📷 Escáner QR desde cámara")
-        st.caption("Apunta la cámara al código QR que contiene el IP o nombre de la impresora Zebra.")
-
-        import streamlit.components.v1 as components
-
-        components.html("""
-        <script src="https://unpkg.com/html5-qrcode"></script>
-        <div id="reader" style="width:300px;margin:auto;"></div>
-        <div id="output" style="text-align:center;padding:10px;font-weight:bold;"></div>
-        <script>
-        function sendToStreamlit(text) {
-            window.parent.postMessage({type: "streamlit:setComponentValue", value: text}, "*");
-            document.getElementById("output").innerHTML = "<h3>✅ Escaneado: " + text + "</h3>";
+# 🔄 Capturar opción seleccionada
+components.html("""
+<script>
+    window.addEventListener('message', (event) => {
+        const value = event.data?.value;
+        if (value) {
+            window.parent.postMessage({type: 'streamlit:setComponentValue', value: value}, '*');
         }
+    });
+</script>
+""", height=0)
 
-        function onScanSuccess(decodedText, decodedResult) {
-            sendToStreamlit(decodedText);
-        }
+# 👉 Variable de navegación
+opcion_menu = st.session_state.get("component_value", st.session_state["menu_seleccionado"])
+st.session_state["menu_seleccionado"] = opcion_menu
 
-        let html5QrcodeScanner = new Html5QrcodeScanner("reader", {
-            fps: 10,
-            qrbox: 250
-        });
-        html5QrcodeScanner.render(onScanSuccess);
-        </script>
-        """, height=500)
+# 🏠 Contenido: Inicio
+if opcion_menu == "🏠 Inicio":
+    st.title("🏠 Bienvenido a Smart Intelligence Tools")
+    st.info("Seleccione una función desde el menú lateral.")
 
-        st.markdown('</div>', unsafe_allow_html=True)
+# 📷 Contenido: Escáner con cámara
+elif opcion_menu == "📷 Escáner de impresora (cámara)":
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.subheader("📷 Escáner QR desde cámara")
+    st.caption("Apunta la cámara al QR con el IP o nombre de impresora. Se insertará automáticamente.")
+
+    components.html("""
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <div id="reader" style="width:300px;margin:auto;"></div>
+    <div id="output" style="text-align:center;padding:10px;font-weight:bold;"></div>
+    <script>
+    function sendToStreamlit(text) {
+        window.parent.postMessage({type: 'streamlit:setComponentValue', value: text}, '*');
+        document.getElementById("output").innerHTML = "<h3>✅ Escaneado: " + text + "</h3>";
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+        sendToStreamlit(decodedText);
+    }
+
+    let html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+        fps: 10,
+        qrbox: 250
+    });
+    html5QrcodeScanner.render(onScanSuccess);
+    </script>
+    """, height=500)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# 🏷️ Contenido: Diseñador de etiquetas ZPL
+elif opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.subheader("🏷️ Diseñador de Etiquetas ZPL")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        cliente = st.selectbox("🧑 Cliente", [
+            "prueba1", "COMPAN", "MAFAM", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
+            "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS"
+        ])
+    with col2:
+        placa = st.selectbox("🚚 Placa", [
+            201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
+            300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
+            400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 500,
+            "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
+            "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
+        ])
+
+    cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
+    impresora_ip = st.text_input("🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"])
+
+    if st.button("🖨️ Imprimir etiquetas"):
+        exito = True
+        for i in range(cantidad_etiquetas):
+            zpl = (
+                "^XA\n"
+                "^PW600\n"
+                "^LL400\n"
+                "^FO50,30^A0N,40,40^FDCliente:^FS\n"
+                f"^FO250,30^A0N,40,40^FD{cliente}^FS\n"
+                "^FO50,100^A0N,40,40^FDPlaca:^FS\n"
+                f"^FO250,100^A0N,40,40^FD{placa}^FS\n"
+                f"^FO50,170^A0N,40,40^FDEtiqueta {i+1} de {cantidad_etiquetas}^FS\n"
+                "^XZ\n"
+            )
+            try:
+                import socket
+                port = 9100
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as printer_socket:
+                    printer_socket.connect((impresora_ip, port))
+                    printer_socket.send(zpl.encode("utf-8"))
+                st.write(f"✅ Etiqueta {i+1} enviada correctamente")
+            except Exception as e:
+                st.error(f"❌ Falló el envío de la etiqueta {i+1}: {e}")
+                exito = False
+                break
+
+        if exito:
+            st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora ({impresora_ip})")
+
+    st.markdown('</div>', unsafe_allow_html=True)
