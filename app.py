@@ -254,8 +254,9 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
         ])
 
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
-    ip_impresora = st.text_input("🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"])
-
+    ip_impresora = st.session_state["nombre_impresora_qr"] = st.text_input(
+    "🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"]
+)
     # ✅ Activar lector QR con botón
     activar_lector = st.button("📷 Escanear código QR de impresora")
 
