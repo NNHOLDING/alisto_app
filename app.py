@@ -233,6 +233,10 @@ elif opcion_menu == "📷 Escáner de impresora (cámara)":
     if valor_qr:
         st.session_state["nombre_impresora_qr"] = valor_qr
 
+# 🛠️ Detectar cambio en IP escaneada y forzar redibujo
+if st.session_state.get("component_value") and st.session_state["component_value"] != st.session_state["nombre_impresora_qr"]:
+    st.session_state["nombre_impresora_qr"] = st.session_state["component_value"]
+    st.experimental_rerun()
 # 🏷️ DISEÑADOR DE ETIQUETAS
 elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
@@ -256,6 +260,7 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
     ip_qr = st.session_state.get("component_value", "")
     if ip_qr and ip_qr != st.session_state["nombre_impresora_qr"]:
         st.session_state["nombre_impresora_qr"] = ip_qr
+        st.experimental_rerun()  # 🪄 Fuerza redibujo para mostrar el nuevo valor en el campo
 
     ip_impresora = st.text_input("🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"])
 
