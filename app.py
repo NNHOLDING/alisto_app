@@ -252,15 +252,14 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
 
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
 
-    # 🔄 Actualiza la IP desde QR si corresponde
+    # 🔄 Actualiza la IP escaneada si es nueva
     ip_qr = st.session_state.get("component_value", "")
     if ip_qr and ip_qr != st.session_state["nombre_impresora_qr"]:
         st.session_state["nombre_impresora_qr"] = ip_qr
 
-    # 🖨️ Campo editable de IP sincronizado con QR
     ip_impresora = st.text_input("🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"])
 
-    # 🔘 Activar lector QR desde el diseñador
+    # 🔘 Botón para activar lector QR
     activar_lector = st.button("📷 Escanear código QR de impresora")
 
     if activar_lector:
@@ -274,7 +273,11 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
                 if (lectorActivo) {
                     window.parent.postMessage({type: "streamlit:setComponentValue", value: text}, "*");
                     lectorActivo = false;
-                    document.getElementById("reader").innerHTML = "<div style='text-align:center;font-weight:bold;'>✅ Escaneado: " + text + "</div>";
+
+                    // ⛔️ Elimina el mensaje visual suelto
+                    document.getElementById("reader").remove();
+
+                    // ✅ Actualiza el campo visual de IP si está presente
                     const ipField = document.querySelector("input[type='text']");
                     if (ipField) { ipField.value = text; }
                 }
@@ -287,7 +290,7 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
             </script>
         """, height=550)
 
-    # 🖨️ Botón de impresión
+    # ✅ Validar IP y enviar etiquetas
     if st.button("🖨️ Imprimir etiquetas"):
         if ip_impresora not in ips_impresoras_validas:
             st.error("❌ La IP no es válida. Verifica o escanea una impresora autorizada.")
