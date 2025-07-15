@@ -185,74 +185,116 @@ st.markdown("""
 if "nombre_impresora_qr" not in st.session_state:
     st.session_state["nombre_impresora_qr"] = ""
 
-# ✅ Menú lateral visual y funcional
+# 🔧 Lista de IPs válidas de impresoras
+ips_impresoras_validas = [
+    "192.188.101.118",  # Zebra San José
+    "192.168.1.201",    # Zebra Planta
+    "10.0.0.10",        # Zebra Central
+    # Agrega más según tu red
+]
+
+# ✅ Menú lateral elegante
 with st.sidebar:
     st.markdown("## ☰ Menú")
     opcion_menu = st.radio("Selecciona una opción:", [
         "Inicio",
-        "🏷️ Diseñador de etiqueta ZPL"
+        "🏷️ Diseñador de etiqueta ZPL",
+        "📷 Escáner de impresora (cámara)"
     ], label_visibility="collapsed")
 
-# ✅ Contenido para Diseñador de etiqueta ZPL
-if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
+# 🏠 Inicio
+if opcion_menu == "Inicio":
+    st.title("🏠 Bienvenido a Smart Intelligence Tools")
+    st.info("Selecciona una herramienta desde el menú lateral para comenzar.")
+
+# 📷 Escáner de impresora (cámara)
+elif opcion_menu == "📷 Escáner de impresora (cámara)":
+    st.subheader("📷 Escáner QR desde cámara")
+    st.caption("Apunta al código QR que contiene la IP o nombre de la impresora.")
+
+    import streamlit.components.v1 as components
+    components.html("""
+        <script src="https://unpkg.com/html5-qrcode"></script>
+        <div id="reader" style="width:300px;margin:auto;"></div>
+        <script>
+        function sendToStreamlit(text) {
+            window.parent.postMessage({type: "streamlit:setComponentValue", value: text}, "*");
+        }
+        function onScanSuccess(decodedText, decodedResult) {
+            sendToStreamlit(decodedText);
+            document.getElementById("reader").insertAdjacentHTML("beforebegin", "<p style='text-align:center;'>✅ Escaneado: " + decodedText + "</p>");
+        }
+        let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess);
+        </script>
+    """, height=500)
+
+    # Asignar valor escaneado como IP
+    valor_qr = st.session_state.get("component_value", "")
+    if valor_qr:
+        st.session_state["nombre_impresora_qr"] = valor_qr
+        st.success(f"✅ Valor escaneado asignado como IP de impresora: {valor_qr}")
+
+# 🏷️ Diseñador de etiqueta ZPL
+elif opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
     with st.container():
         st.markdown('<div class="form-container">', unsafe_allow_html=True)
-        st.subheader("🏷️ Diseñador de etiqueta ZPL")
+        st.subheader("🏷️ Diseñador de Etiqueta ZPL")
 
         col1, col2 = st.columns(2)
-
         with col1:
             cliente = st.selectbox("🧑 Cliente", [
                 "prueba1", "COMPAN", "MAFAM", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
                 "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS"
             ])
-
         with col2:
             placa = st.selectbox("🚚 Placa", [
-                201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
-                300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
-                400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 500,
-                "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
-                "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
+                201, 202, 203, 204, 205, "SIGMA", "POZUELO", "COMAPAN", "HILLTOP", "WALMART"
             ])
 
         cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
-        impresora_ip = "192.188.101.118"  # ← IP fija, puedes usar st.session_state si quieres que venga del escáner
 
+        ip_impresora = st.text_input("🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"])
+
+        # 🔘 Validar IP antes de imprimir
         if st.button("🖨️ Imprimir etiquetas"):
-            exito = True
-            for i in range(cantidad_etiquetas):
-                zpl = (
-                    "^XA\n"
-                    "^PW600\n"
-                    "^LL400\n"
-                    "^FO50,30^A0N,40,40^FDCliente:^FS\n"
-                    f"^FO250,30^A0N,40,40^FD{cliente}^FS\n"
-                    "^FO50,100^A0N,40,40^FDPlaca:^FS\n"
-                    f"^FO250,100^A0N,40,40^FD{placa}^FS\n"
-                    f"^FO50,170^A0N,40,40^FDEtiqueta {i+1} de {cantidad_etiquetas}^FS\n"
-                    "^XZ\n"
-                )
-                try:
-                    import socket
-                    port = 9100
-                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as printer_socket:
-                        printer_socket.connect((impresora_ip, port))
-                        printer_socket.send(zpl.encode("utf-8"))
-                    st.write(f"✅ Etiqueta {i+1} enviada correctamente")
-                except Exception as e:
-                    st.error(f"❌ Falló el envío de la etiqueta {i+1}: {e}")
-                    exito = False
-                    break
+            if ip_impresora not in ips_impresoras_validas:
+                st.error("❌ IP inválida. Escanea o escribe una IP válida de impresora.")
+            else:
+                exito = True
+                for i in range(cantidad_etiquetas):
+                    zpl = (
+                        "^XA\n"
+                        "^PW600\n"
+                        "^LL400\n"
+                        "^FO50,30^A0N,40,40^FDCliente:^FS\n"
+                        f"^FO250,30^A0N,40,40^FD{cliente}^FS\n"
+                        "^FO50,100^A0N,40,40^FDPlaca:^FS\n"
+                        f"^FO250,100^A0N,40,40^FD{placa}^FS\n"
+                        f"^FO50,170^A0N,40,40^FDEtiqueta {i+1} de {cantidad_etiquetas}^FS\n"
+                        "^XZ\n"
+                    )
+                    try:
+                        import socket
+                        port = 9100
+                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as printer_socket:
+                            printer_socket.connect((ip_impresora, port))
+                            printer_socket.send(zpl.encode("utf-8"))
+                        st.write(f"✅ Etiqueta {i+1} enviada correctamente")
+                    except Exception as e:
+                        st.error(f"❌ Error al enviar etiqueta {i+1}: {e}")
+                        exito = False
+                        break
 
-            if exito:
-                st.success(
-                    f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra (60SANJOSE - IP: {impresora_ip})"
-                )
+                if exito:
+                    st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora ({ip_impresora})")
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-# ✅ Contenido para Inicio
-elif opcion_menu == "Inicio":
-    st.title("🏠 Bienvenido a Smart Intelligence Tools")
-    st.info("Selecciona una herramienta desde el menú lateral para comenzar.")
+# 📎 Footer
+st.markdown("""
+<hr style="margin-top: 50px; border: none; border-top: 1px solid #ccc;" />
+<div style="text-align: center; color: gray; font-size: 0.9em; margin-top: 20px;">
+    NN HOLDING SOLUTIONS &copy; 2025, Todos los derechos reservados
+</div>
+""", unsafe_allow_html=True)
