@@ -262,7 +262,12 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
         st.session_state["nombre_impresora_qr"] = ip_qr
         st.experimental_rerun()  # 🪄 Fuerza redibujo para mostrar el nuevo valor en el campo
 
-    ip_impresora = st.text_input("🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"])
+    st.session_state["nombre_impresora_qr"] = st.text_input(
+    "🖨️ IP de la impresora",
+    value=st.session_state["nombre_impresora_qr"],
+    key="campo_ip_impresora"
+)
+ip_impresora = st.session_state["nombre_impresora_qr"]
 
     # 🔘 Botón para activar lector QR
     activar_lector = st.button("📷 Escanear código QR de impresora")
