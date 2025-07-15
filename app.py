@@ -235,12 +235,15 @@ if opcion_menu == "📊 Historial de Certificados":
         if ordenes_filtradas:
             df_historial = df_historial[df_historial["orden"].isin(ordenes_filtradas)]
 
-        # 🎛️ Filtro por fecha (convertir a datetime compatible con Streamlit)
-        if not df_historial.empty:
-            fecha_min = df_historial["fecha"].min().to_pydatetime()
-            fecha_max = df_historial["fecha"].max().to_pydatetime()
+        # 🎛️ Filtro por fecha (solo si hay al menos 2 fechas distintas)
+        fechas_unicas = df_historial["fecha"].dropna().unique()
+        if len(fechas_unicas) >= 2:
+            fecha_min = min(fechas_unicas).to_pydatetime()
+            fecha_max = max(fechas_unicas).to_pydatetime()
             rango = st.slider("Filtrar por fecha", fecha_min, fecha_max, value=(fecha_min, fecha_max))
             df_historial = df_historial[(df_historial["fecha"] >= rango[0]) & (df_historial["fecha"] <= rango[1])]
+        else:
+            st.info("Solo hay una fecha disponible. No se puede aplicar filtro de rango.")
 
         # 📈 Gráfico interactivo
         if not df_historial.empty:
