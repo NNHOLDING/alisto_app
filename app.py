@@ -254,8 +254,45 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
         ])
 
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
-    ip_impresora = st.text_input("🖨️ Selecciones la impresora", value=st.session_state["nombre_impresora_qr"])
+    ip_impresora = st.text_input("🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"])
 
+    # ✅ Activar lector QR con botón
+    activar_lector = st.button("📷 Escanear código QR de impresora")
+
+    if activar_lector:
+        import streamlit.components.v1 as components
+        components.html("""
+        <script src="https://unpkg.com/html5-qrcode"></script>
+        <div id="reader" style="width:300px;margin:auto;"></div>
+        <script>
+        let lectorActivo = true;
+        function sendToStreamlit(text) {
+            if (lectorActivo) {
+                window.parent.postMessage({type: "streamlit:setComponentValue", value: text}, "*");
+                document.getElementById("reader").remove();  // 🛑 Cierra el lector
+                lectorActivo = false;
+                let mensaje = document.createElement("p");
+                mensaje.innerHTML = "✅ Escaneado: " + text;
+                mensaje.style.textAlign = "center";
+                mensaje.style.fontWeight = "bold";
+                document.body.appendChild(mensaje);
+            }
+        }
+        function onScanSuccess(decodedText, decodedResult) {
+            sendToStreamlit(decodedText);
+        }
+        let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess);
+        </script>
+        """, height=550)
+
+    # ✅ Captura de escaneo QR
+    ip_qr = st.session_state.get("component_value", "")
+    if ip_qr and ip_qr != st.session_state["nombre_impresora_qr"]:
+        st.session_state["nombre_impresora_qr"] = ip_qr
+        st.success(f"✅ IP escaneada asignada: {ip_qr}")
+
+    # 🔘 Validación + impresión
     if st.button("🖨️ Imprimir etiquetas"):
         if ip_impresora not in ips_impresoras_validas:
             st.error("❌ La IP no es válida. Verifica o escanea una impresora autorizada.")
@@ -289,5 +326,3 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
                 st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora ({ip_impresora})")
 
     st.markdown('</div>', unsafe_allow_html=True)
-
-
