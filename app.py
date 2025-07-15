@@ -223,18 +223,15 @@ elif opcion_menu == "📷 Escáner de impresora (cámara)":
         }
         function onScanSuccess(decodedText, decodedResult) {
             sendToStreamlit(decodedText);
-            document.getElementById("reader").insertAdjacentHTML("beforebegin", "<p style='text-align:center;'>✅ Escaneado: " + decodedText + "</p>");
         }
         let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
         html5QrcodeScanner.render(onScanSuccess);
         </script>
     """, height=500)
 
-    # Capturar valor escaneado
     valor_qr = st.session_state.get("component_value", "")
     if valor_qr:
         st.session_state["nombre_impresora_qr"] = valor_qr
-        st.success(f"✅ IP escaneada asignada: {valor_qr}")
 
 # 🏷️ DISEÑADOR DE ETIQUETAS
 elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
@@ -255,14 +252,15 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
 
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
 
-    # 🔄 Actualiza la IP escaneada si es nueva
+    # 🔄 Actualiza la IP desde QR si corresponde
     ip_qr = st.session_state.get("component_value", "")
     if ip_qr and ip_qr != st.session_state["nombre_impresora_qr"]:
         st.session_state["nombre_impresora_qr"] = ip_qr
 
+    # 🖨️ Campo editable de IP sincronizado con QR
     ip_impresora = st.text_input("🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"])
 
-    # 🔘 Botón para activar lector QR
+    # 🔘 Activar lector QR desde el diseñador
     activar_lector = st.button("📷 Escanear código QR de impresora")
 
     if activar_lector:
@@ -275,11 +273,11 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
             function sendToStreamlit(text) {
                 if (lectorActivo) {
                     window.parent.postMessage({type: "streamlit:setComponentValue", value: text}, "*");
-                    document.getElementById("reader").remove();
                     lectorActivo = false;
+                    document.getElementById("reader").innerHTML = "<div style='text-align:center;font-weight:bold;'>✅ Escaneado: " + text + "</div>";
                     const ipField = document.querySelector("input[type='text']");
-                    if (ipField) {
-                    ipField.value = text;
+                    if (ipField) { ipField.value = text; }
+                }
             }
             function onScanSuccess(decodedText, decodedResult) {
                 sendToStreamlit(decodedText);
@@ -289,7 +287,7 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
             </script>
         """, height=550)
 
-    # ✅ Validar IP y enviar etiquetas
+    # 🖨️ Botón de impresión
     if st.button("🖨️ Imprimir etiquetas"):
         if ip_impresora not in ips_impresoras_validas:
             st.error("❌ La IP no es válida. Verifica o escanea una impresora autorizada.")
