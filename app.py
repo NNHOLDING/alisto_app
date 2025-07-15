@@ -195,7 +195,9 @@ if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
         col1, col2 = st.columns(2)
 elif opcion_menu == "📊 Historial de Certificados":
     import pandas as pd
+import pandas as pd
 import altair as alt
+import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -209,7 +211,7 @@ def cargar_historial_certificados():
     registros = sheet.get_all_values()
 
     df = pd.DataFrame(registros[1:], columns=registros[0])
-    df.columns = [col.lower() for col in df.columns]  # ⬅️ Normaliza encabezados a minúsculas
+    df.columns = [col.lower() for col in df.columns]  # Normaliza encabezados
     df["fecha"] = pd.to_datetime(df["fecha"], errors="coerce")
     df["cantidad"] = pd.to_numeric(df["cantidad"], errors="coerce")
     return df
@@ -233,10 +235,10 @@ if opcion_menu == "📊 Historial de Certificados":
         if ordenes_filtradas:
             df_historial = df_historial[df_historial["orden"].isin(ordenes_filtradas)]
 
-        # 🎛️ Filtro por fecha
+        # 🎛️ Filtro por fecha (convertir a datetime compatible con Streamlit)
         if not df_historial.empty:
-            fecha_min = df_historial["fecha"].min()
-            fecha_max = df_historial["fecha"].max()
+            fecha_min = df_historial["fecha"].min().to_pydatetime()
+            fecha_max = df_historial["fecha"].max().to_pydatetime()
             rango = st.slider("Filtrar por fecha", fecha_min, fecha_max, value=(fecha_min, fecha_max))
             df_historial = df_historial[(df_historial["fecha"] >= rango[0]) & (df_historial["fecha"] <= rango[1])]
 
