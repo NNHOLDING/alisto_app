@@ -181,62 +181,104 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-import streamlit.components.v1 as components
-
-# 🔄 Inicializar estado
+# ✅ Inicializar estados necesarios
 if "menu_seleccionado" not in st.session_state:
-    st.session_state.menu_seleccionado = "🏠 Inicio"
+    st.session_state["menu_seleccionado"] = "🏠 Inicio"
 if "nombre_impresora_qr" not in st.session_state:
     st.session_state["nombre_impresora_qr"] = ""
 
-# ✅ Menú lateral visual tipo hamburguesa
+# ✅ Menú lateral tipo hamburguesa
 with st.sidebar:
     st.markdown("""
     <style>
-        .hamburguesa {
-            font-size: 32px;
-            cursor: pointer;
+        .menu-toggle {
+            font-size: 30px;
             text-align: center;
-            padding: 15px;
+            padding: 10px;
+            cursor: pointer;
         }
-        .menu-lista {
-            display: none;
+        .menu-opciones {
+            display: flex;
             flex-direction: column;
             gap: 12px;
-            padding: 10px;
+            margin-top: 10px;
         }
-        .menu-lista button {
+        .menu-opciones button {
             background-color: #4CAF50;
             color: white;
-            padding: 10px;
+            padding: 10px 16px;
             font-size: 16px;
             border-radius: 8px;
             border: none;
+            text-align: left;
         }
-        .menu-lista button:hover {
+        .menu-opciones button:hover {
             background-color: #45a049;
         }
     </style>
 
-    <div class="hamburguesa" onclick="document.getElementById('menu-opciones').style.display='flex'">☰</div>
-    <div id="menu-opciones" class="menu-lista">
-        <button onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: '🏠 Inicio'}, '*')">🏠 Inicio</button>
-        <button onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: '🏷️ Diseñador de etiqueta ZPL'}, '*')">🏷️ Diseñador de etiqueta ZPL</button>
-        <button onclick="window.parent.postMessage({type: 'streamlit:setComponentValue', value: '📷 Escáner de impresora (cámara)'}, '*')">📷 Escáner de impresora (cámara)</button>
+    <div class="menu-toggle">☰ Menú</div>
+    <div class="menu-opciones">
+        <form action="" method="post">
+            <button name="opcion" type="submit" formaction="?opcion=Inicio">🏠 Inicio</button>
+            <button name="opcion" type="submit" formaction="?opcion=ZPL">🏷️ Diseñador de etiqueta ZPL</button>
+            <button name="opcion" type="submit" formaction="?opcion=Scanner">📷 Escáner de impresora (cámara)</button>
+        </form>
     </div>
     """, unsafe_allow_html=True)
 
-components.html("""
-<script>
-window.addEventListener("message", function(event) {
-    const valor = event.data?.value;
-    if (valor) {
-        window.parent.postMessage({type: "streamlit:setComponentValue", value: valor}, "*");
-    }
-});
-</script>
-""", height=0)
+# ✅ Leer parámetro desde URL (query string)
+opcion_url = st.query_params.get("opcion", [""])[0]
 
-# 🔁 Capturar selección de menú
-seleccion = st.session_state.get("component_value", st.session_state.menu_seleccionado)
-st.session_state.menu_seleccionado = seleccion
+if opcion_url == "ZPL":
+    st.session_state["menu_seleccionado"] = "🏷️ Diseñador de etiqueta ZPL"
+elif opcion_url == "Scanner":
+    st.session_state["menu_seleccionado"] = "📷 Escáner de impresora (cámara)"
+elif opcion_url == "Inicio":
+    st.session_state["menu_seleccionado"] = "🏠 Inicio"
+
+# ✅ Mostrar contenido basado en navegación
+opcion_menu = st.session_state["menu_seleccionado"]
+
+if opcion_menu == "🏠 Inicio":
+    st.title("🏠 Bienvenido a Smart Intelligence Tools")
+    st.info("Seleccione una función desde el menú lateral.")
+
+elif opcion_menu == "📷 Escáner de impresora (cámara)":
+    st.subheader("📷 Escáner QR desde cámara")
+    import streamlit.components.v1 as components
+    components.html("""
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <div id="reader" style="width:300px;margin:auto;"></div>
+    <script>
+    function sendToStreamlit(text) {
+        window.parent.postMessage({type: "streamlit:setComponentValue", value: text}, "*");
+    }
+    function onScanSuccess(decodedText, decodedResult) {
+        sendToStreamlit(decodedText);
+        document.getElementById("reader").insertAdjacentHTML("beforebegin", "<p style='text-align:center;'>✅ Escaneado: " + decodedText + "</p>");
+    }
+    let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
+    </script>
+    """, height=500)
+
+elif opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
+    st.subheader("🏷️ Diseñador de Etiquetas ZPL")
+    col1, col2 = st.columns(2)
+    with col1:
+        cliente = st.selectbox("🧑 Cliente", ["prueba1", "COMPAN", "MAFAM", "DEMASA", "BIMBO COSTA RICA"])
+    with col2:
+        placa = st.selectbox("🚚 Placa", ["201", "202", "SIGMA", "POZUELO"])
+    cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
+    ip_impresora = st.text_input("🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"])
+    if st.button("🖨️ Imprimir etiquetas"):
+        st.success(f"✅ Etiquetas enviadas a {ip_impresora}")
+
+# ✅ Footer
+st.markdown("""
+<hr style="margin-top: 50px; border: none; border-top: 1px solid #ccc;" />
+<div style="text-align: center; color: gray; font-size: 0.9em; margin-top: 20px;">
+    NN HOLDING SOLUTIONS &copy; 2025, Todos los derechos reservados
+</div>
+""", unsafe_allow_html=True)
