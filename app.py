@@ -144,14 +144,14 @@ with st.container():
             else:
                 # Registro en Google Sheets
                 datos = [
-                    str(fecha),
+                    fecha.strftime("%d/%m/%Y"),
                     numero_orden,
                     placa,
                     codigo,
                     descripcion,  # ← corregido
                     cantidad,
                     lote,
-                    str(fecha_lote),
+                    fecha_lote.strftime("%d/%m/%Y"),
                     nombre_empleado,
                     str(codigo_seleccionado),
                     str(hora)
