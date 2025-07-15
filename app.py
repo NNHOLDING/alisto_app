@@ -277,12 +277,9 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
                     window.parent.postMessage({type: "streamlit:setComponentValue", value: text}, "*");
                     document.getElementById("reader").remove();
                     lectorActivo = false;
-                    let mensaje = document.createElement("p");
-                    mensaje.innerHTML = "✅ Escaneado: " + text;
-                    mensaje.style.textAlign = "center";
-                    mensaje.style.fontWeight = "bold";
-                    document.body.appendChild(mensaje);
-                }
+                    const ipField = document.querySelector("input[type='text']");
+                    if (ipField) {
+                    ipField.value = text;
             }
             function onScanSuccess(decodedText, decodedResult) {
                 sendToStreamlit(decodedText);
