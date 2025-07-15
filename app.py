@@ -291,9 +291,9 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
     st.markdown('</div>', unsafe_allow_html=True)
 
 # 📎 FOOTER siempre al final
-st.markdown("""
-<hr style="margin-top: 50px; border: none; border-top: 1px solid #ccc;" />
-<div style="text-align: center; color: gray; font-size: 0.9em; margin-top: 20px;">
-    NN HOLDING SOLUTIONS &copy; 2025, Todos los derechos reservados
+#st.markdown("""
+#<hr style="margin-top: 50px; border: none; border-top: 1px solid #ccc;" />
+#<div style="text-align: center; color: gray; font-size: 0.9em; margin-top: 20px;">
+    #NN HOLDING SOLUTIONS &copy; 2025, Todos los derechos reservados
 </div>
 """, unsafe_allow_html=True)
