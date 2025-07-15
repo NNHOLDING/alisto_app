@@ -227,20 +227,10 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
 
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
 
-    # 🧠 Detectar valor escaneado y actualizar en sesión
-    valor_qr = st.session_state.get("component_value", "")
-    if valor_qr and valor_qr != st.session_state["nombre_impresora_qr"]:
-        st.session_state["nombre_impresora_qr"] = valor_qr
+    # 🖨️ Campo de IP editable y visible para el lector QR
+    ip_impresora = st.text_input("🖨️ IP de la impresora", key="ip_impresora_manual")
 
-    # 🖨️ Campo editable de IP sincronizado
-    ip_impresora = st.text_input(
-        "🖨️ IP de la impresora",
-        value=st.session_state["nombre_impresora_qr"],
-        key="campo_ip_impresora"
-    )
-    st.session_state["nombre_impresora_qr"] = ip_impresora
-
-    # 📷 Botón para escanear QR
+    # 📷 Activar lector QR directamente
     activar_lector = st.button("📷 Escanear código QR de impresora")
     if activar_lector:
         import streamlit.components.v1 as components
@@ -248,26 +238,23 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
             <script src="https://unpkg.com/html5-qrcode"></script>
             <div id="reader" style="width:300px;margin:auto;"></div>
             <script>
-            let lectorActivo = true;
-            function sendToStreamlit(text) {
-                if (lectorActivo) {
-                    window.parent.postMessage({type: "streamlit:setComponentValue", value: text}, "*");
-                    lectorActivo = false;
-                    document.getElementById("reader").remove();
-                }
-            }
             function onScanSuccess(decodedText, decodedResult) {
-                sendToStreamlit(decodedText);
+                const input = document.querySelector("input[data-testid='stTextInput']");
+                if (input) {
+                    input.value = decodedText;
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+                document.getElementById("reader").innerHTML = "<div style='text-align:center;'>✅ Escaneado</div>";
             }
             let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
             html5QrcodeScanner.render(onScanSuccess);
             </script>
-        """, height=550)
+        """, height=500)
 
-    # 🖨️ Imprimir etiquetas
+    # 🖨️ Validar IP y imprimir etiquetas
     if st.button("🖨️ Imprimir etiquetas"):
         if ip_impresora not in ips_impresoras_validas:
-            st.error("❌ IP inválida. Escanea o escribe una IP autorizada.")
+            st.error("❌ IP inválida. Verifica o escanea una impresora autorizada.")
         else:
             exito = True
             for i in range(cantidad_etiquetas):
