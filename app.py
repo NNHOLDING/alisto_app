@@ -205,7 +205,7 @@ with st.sidebar:
 
 # 🏠 INICIO
 if opcion_menu == "Inicio":
-    st.title("NN HOLDING SOLUTIONS")
+    st.title(" ")
     st.info(" ")
 
 # 📷 ESCÁNER
