@@ -208,50 +208,50 @@ def cargar_historial_certificados():
     sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit").worksheet("TCertificados")
     registros = sheet.get_all_values()
 
-    # Crear DataFrame
-    df = pd.DataFrame(registros[1:], columns=registros[0])  # Usar encabezado de la primera fila
-    df["Fecha"] = pd.to_datetime(df["Fecha"], errors="coerce")
-    df["Cantidad"] = pd.to_numeric(df["Cantidad"], errors="coerce")
+    df = pd.DataFrame(registros[1:], columns=registros[0])
+    df.columns = [col.lower() for col in df.columns]  # ⬅️ Normaliza encabezados a minúsculas
+    df["fecha"] = pd.to_datetime(df["fecha"], errors="coerce")
+    df["cantidad"] = pd.to_numeric(df["cantidad"], errors="coerce")
     return df
 
 # ✅ Contenido del submenú "Historial de Certificados"
-if opcion_menu == "📊 Historial de Certificados":
+elif opcion_menu == "📊 Historial de Certificados":
     st.subheader("📊 Historial de Certificados")
 
     try:
         df_historial = cargar_historial_certificados()
 
         # 🎛️ Filtro por placa
-        placas_disponibles = df_historial["Placa"].dropna().unique().tolist()
+        placas_disponibles = df_historial["placa"].dropna().unique().tolist()
         placas_filtradas = st.multiselect("Filtrar por placa", placas_disponibles)
         if placas_filtradas:
-            df_historial = df_historial[df_historial["Placa"].isin(placas_filtradas)]
+            df_historial = df_historial[df_historial["placa"].isin(placas_filtradas)]
 
-        # 🎛️ Filtro por número de orden
-        ordenes_disponibles = df_historial["Número de orden"].dropna().unique().tolist()
-        ordenes_filtradas = st.multiselect("Filtrar por número de orden", ordenes_disponibles)
+        # 🎛️ Filtro por orden
+        ordenes_disponibles = df_historial["orden"].dropna().unique().tolist()
+        ordenes_filtradas = st.multiselect("Filtrar por orden", ordenes_disponibles)
         if ordenes_filtradas:
-            df_historial = df_historial[df_historial["Número de orden"].isin(ordenes_filtradas)]
+            df_historial = df_historial[df_historial["orden"].isin(ordenes_filtradas)]
 
-        # 🎛️ Filtro por rango de fechas
+        # 🎛️ Filtro por fecha
         if not df_historial.empty:
-            fecha_min = df_historial["Fecha"].min()
-            fecha_max = df_historial["Fecha"].max()
+            fecha_min = df_historial["fecha"].min()
+            fecha_max = df_historial["fecha"].max()
             rango = st.slider("Filtrar por fecha", fecha_min, fecha_max, value=(fecha_min, fecha_max))
-            df_historial = df_historial[(df_historial["Fecha"] >= rango[0]) & (df_historial["Fecha"] <= rango[1])]
+            df_historial = df_historial[(df_historial["fecha"] >= rango[0]) & (df_historial["fecha"] <= rango[1])]
 
-        # 📈 Gráfico
+        # 📈 Gráfico interactivo
         if not df_historial.empty:
             chart = alt.Chart(df_historial).mark_bar().encode(
-                x="Fecha:T",
-                y="Cantidad:Q",
-                color="Placa:N",
-                tooltip=["Fecha", "Placa", "Cantidad", "Número de orden", "Empleado"]
+                x="fecha:T",
+                y="cantidad:Q",
+                color="placa:N",
+                tooltip=["fecha", "placa", "cantidad", "orden", "nombre usuario"]
             ).properties(width=700)
 
             st.altair_chart(chart, use_container_width=True)
 
-            # 📋 Tabla
+            # 📋 Tabla de datos
             st.markdown("### 📃 Detalle de registros")
             st.dataframe(df_historial)
         else:
@@ -259,7 +259,6 @@ if opcion_menu == "📊 Historial de Certificados":
 
     except Exception as e:
         st.error(f"❌ Error al cargar historial: {e}")
-
         with col1:
             cliente = st.selectbox("🧑 Cliente", [
                 "prueba1", "COMAPAN", "MAFAM", "DEMASA", "PANIFICADORA ZULIGA", "PEDRO FABIAN", "PANIFICADORA LEANDRO", "AUTODELI", "SUR QUEMICA", "POZUELO", "FMS FOOD MANUFACTURING", "PURATOS", "LOS PATITOS", "DOS PINOS", "ESCULTURA DE JADE", "YAM PAI", "KATIA MARIA VARGAS", "COMPAÑIA LEE QUIROS", "UNIVERSAL DE ALIMENTOS", "COMPAN", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
