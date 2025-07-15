@@ -211,8 +211,8 @@ def cargar_historial_certificados():
     registros = sheet.get_all_values()
 
     df = pd.DataFrame(registros[1:], columns=registros[0])
-    df.columns = [col.lower() for col in df.columns]  # Normaliza encabezados
-    df["fecha"] = pd.to_datetime(df["fecha"], errors="coerce")
+    df.columns = [col.lower() for col in df.columns]
+    df["fecha"] = pd.to_datetime(df["fecha"], format="%d/%m/%Y", errors="coerce")  # ← formato corregido
     df["cantidad"] = pd.to_numeric(df["cantidad"], errors="coerce")
     return df
 
