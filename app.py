@@ -208,7 +208,7 @@ if opcion_menu == "Inicio":
     st.title(" ")
     st.info(" ")
 
-# 📷 ESCÁNER
+# 📷 ESCÁNER (módulo aislado opcional)
 elif opcion_menu == "📷 Escáner de impresora (cámara)":
     st.subheader("📷 Escáner QR desde cámara")
     st.caption("Escanea el código QR que contiene la IP o nombre de la impresora Zebra.")
@@ -229,14 +229,6 @@ elif opcion_menu == "📷 Escáner de impresora (cámara)":
         </script>
     """, height=500)
 
-    valor_qr = st.session_state.get("component_value", "")
-    if valor_qr:
-        st.session_state["nombre_impresora_qr"] = valor_qr
-
-# 🛠️ Detectar cambio en IP escaneada y forzar redibujo
-if st.session_state.get("component_value") and st.session_state["component_value"] != st.session_state["nombre_impresora_qr"]:
-    st.session_state["nombre_impresora_qr"] = st.session_state["component_value"]
-    st.experimental_rerun()
 # 🏷️ DISEÑADOR DE ETIQUETAS
 elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
@@ -256,20 +248,20 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
 
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
 
-    # 🔄 Actualiza la IP escaneada si es nueva
+    # 🛠️ Actualizar IP escaneada si existe
     ip_qr = st.session_state.get("component_value", "")
     if ip_qr and ip_qr != st.session_state["nombre_impresora_qr"]:
         st.session_state["nombre_impresora_qr"] = ip_qr
-        st.experimental_rerun()  # 🪄 Fuerza redibujo para mostrar el nuevo valor en el campo
 
+    # 🖨️ Campo de IP sincronizado
     st.session_state["nombre_impresora_qr"] = st.text_input(
-    "🖨️ IP de la impresora",
-    value=st.session_state["nombre_impresora_qr"],
-    key="campo_ip_impresora"
-)
-ip_impresora = st.session_state["nombre_impresora_qr"]
+        "🖨️ IP de la impresora",
+        value=st.session_state["nombre_impresora_qr"],
+        key="campo_ip_impresora"
+    )
+    ip_impresora = st.session_state["nombre_impresora_qr"]
 
-    # 🔘 Botón para activar lector QR
+    # 🔘 Activar lector QR
     activar_lector = st.button("📷 Escanear código QR de impresora")
 
     if activar_lector:
@@ -283,13 +275,7 @@ ip_impresora = st.session_state["nombre_impresora_qr"]
                 if (lectorActivo) {
                     window.parent.postMessage({type: "streamlit:setComponentValue", value: text}, "*");
                     lectorActivo = false;
-
-                    // ⛔️ Elimina el mensaje visual suelto
                     document.getElementById("reader").remove();
-
-                    // ✅ Actualiza el campo visual de IP si está presente
-                    const ipField = document.querySelector("input[type='text']");
-                    if (ipField) { ipField.value = text; }
                 }
             }
             function onScanSuccess(decodedText, decodedResult) {
@@ -300,7 +286,7 @@ ip_impresora = st.session_state["nombre_impresora_qr"]
             </script>
         """, height=550)
 
-    # ✅ Validar IP y enviar etiquetas
+    # ✅ Validar e imprimir etiquetas
     if st.button("🖨️ Imprimir etiquetas"):
         if ip_impresora not in ips_impresoras_validas:
             st.error("❌ La IP no es válida. Verifica o escanea una impresora autorizada.")
