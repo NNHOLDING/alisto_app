@@ -189,12 +189,12 @@ if "component_value" not in st.session_state:
 
 # 🔐 IPs válidas
 ips_impresoras_validas = [
-    "192.188.101.118",  # Zebra San José
-    "192.168.1.201",    # Zebra Planta
-    "10.0.0.10"         # Zebra Central
+    "192.188.101.118",
+    "192.168.1.201",
+    "10.0.0.10"
 ]
 
-# 🔧 Menú lateral elegante
+# 🔧 Menú lateral
 with st.sidebar:
     st.markdown("## ☰ Menú")
     opcion_menu = st.radio("Selecciona una opción:", [
@@ -208,28 +208,7 @@ if opcion_menu == "Inicio":
     st.title(" ")
     st.info(" ")
 
-# 📷 ESCÁNER (módulo aislado opcional)
-elif opcion_menu == "📷 Escáner de impresora (cámara)":
-    st.subheader("📷 Escáner QR desde cámara")
-    st.caption("Escanea el código QR que contiene la IP o nombre de la impresora Zebra.")
-
-    import streamlit.components.v1 as components
-    components.html("""
-        <script src="https://unpkg.com/html5-qrcode"></script>
-        <div id="reader" style="width:300px;margin:auto;"></div>
-        <script>
-        function sendToStreamlit(text) {
-            window.parent.postMessage({type: "streamlit:setComponentValue", value: text}, "*");
-        }
-        function onScanSuccess(decodedText, decodedResult) {
-            sendToStreamlit(decodedText);
-        }
-        let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
-        html5QrcodeScanner.render(onScanSuccess);
-        </script>
-    """, height=500)
-
-# 🏷️ DISEÑADOR DE ETIQUETAS
+# 🏷️ DISEÑADOR
 elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
     st.subheader("🏷️ Diseñador de Etiqueta SIT")
@@ -248,22 +227,21 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
 
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
 
-    # 🛠️ Actualizar IP escaneada si existe
-    ip_qr = st.session_state.get("component_value", "")
-    if ip_qr and ip_qr != st.session_state["nombre_impresora_qr"]:
-        st.session_state["nombre_impresora_qr"] = ip_qr
+    # 🧠 Detectar valor escaneado y actualizar en sesión
+    valor_qr = st.session_state.get("component_value", "")
+    if valor_qr and valor_qr != st.session_state["nombre_impresora_qr"]:
+        st.session_state["nombre_impresora_qr"] = valor_qr
 
-    # 🖨️ Campo de IP sincronizado
-    st.session_state["nombre_impresora_qr"] = st.text_input(
+    # 🖨️ Campo editable de IP sincronizado
+    ip_impresora = st.text_input(
         "🖨️ IP de la impresora",
         value=st.session_state["nombre_impresora_qr"],
         key="campo_ip_impresora"
     )
-    ip_impresora = st.session_state["nombre_impresora_qr"]
+    st.session_state["nombre_impresora_qr"] = ip_impresora
 
-    # 🔘 Activar lector QR
+    # 📷 Botón para escanear QR
     activar_lector = st.button("📷 Escanear código QR de impresora")
-
     if activar_lector:
         import streamlit.components.v1 as components
         components.html("""
@@ -286,10 +264,10 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
             </script>
         """, height=550)
 
-    # ✅ Validar e imprimir etiquetas
+    # 🖨️ Imprimir etiquetas
     if st.button("🖨️ Imprimir etiquetas"):
         if ip_impresora not in ips_impresoras_validas:
-            st.error("❌ La IP no es válida. Verifica o escanea una impresora autorizada.")
+            st.error("❌ IP inválida. Escanea o escribe una IP autorizada.")
         else:
             exito = True
             for i in range(cantidad_etiquetas):
