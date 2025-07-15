@@ -38,7 +38,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Título
-st.title("📦 Smart Intelligence Tools - Almacén Unimar")
+st.title("📦 Smart Intelligence Tools")
 
 # Hora local de Costa Rica
 cr_timezone = pytz.timezone("America/Costa_Rica")
@@ -90,7 +90,7 @@ with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
 
     with st.form("formulario_alisto"):
-        st.subheader("📝 Ingreso de datos")
+        st.subheader("📝 Almacen Unimar 60")
 
         col1, col2 = st.columns(2)
         with col1:
@@ -152,8 +152,8 @@ with st.container():
                     cantidad,
                     lote,
                     str(fecha_lote),
-                    nombre_empleado,
                     str(codigo_seleccionado),
+                    nombre_empleado,
                     str(hora)
                 ]
                 guardar_en_google_sheets(datos)
@@ -181,282 +181,50 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-import streamlit as st
-
- 
-
-# ✅ CSS corporativo personalizado
-
-st.markdown("""
-
-    <style>
-
-        @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-
- 
-
-        html, body, [class*="css"] {
-
-            font-family: 'Roboto', sans-serif;
-
-            background-color: #f5f7fa;
-
-            color: #333333;
-
-        }
-
- 
-
-        .logo-container {
-
-            display: flex;
-
-            align-items: center;
-
-            padding: 10px 0;
-
-        }
-
- 
-
-        .menu-toggle {
-
-            cursor: pointer;
-
-            font-size: 26px;
-
-            background-color: transparent;
-
-            border: none;
-
-            padding: 6px 12px;
-
-        }
-
- 
-
-        .menu-toggle:hover {
-
-            color: #2e7d32;
-
-        }
-
- 
-
-        .menu-content {
-
-            display: none;
-
-            background-color: #ffffff;
-
-            padding: 10px;
-
-            margin-top: 5px;
-
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-
-            border-radius: 8px;
-
-        }
-
- 
-
-        .menu-active .menu-content {
-
-            display: block;
-
-        }
-
- 
-
-        .form-container select, .form-container input {
-
-            width: 100%;
-
-            padding: 8px;
-
-            border-radius: 6px;
-
-            border: 1px solid #ccc;
-
-            margin-bottom: 10px;
-
-        }
-
- 
-
-        .form-container button {
-
-            background-color: #2e7d32;
-
-            color: white;
-
-            border: none;
-
-            padding: 10px 16px;
-
-            border-radius: 6px;
-
-            font-size: 16px;
-
-            cursor: pointer;
-
-        }
-
- 
-
-        .form-container button:hover {
-
-            background-color: #1b5e20;
-
-        }
-
-    </style>
-
-""", unsafe_allow_html=True)
-
- 
-
-# ✅ Menú tipo hamburguesa
-
-st.markdown("""
-
-    <div class="logo-container">
-
-        <button class="menu-toggle" onclick="document.querySelector('.menu-container').classList.toggle('menu-active')">
-
-            ☰
-
-        </button>
-
-        <h3 style="margin-left: 10px;">Panel de Impresión Corporativo</h3>
-
-    </div>
-
-    <div class="menu-container">
-
-        <div class="menu-content">
-
-            <select id="menuOption" onchange="window.location.href=window.location.href + '?menu=' + this.value">
-
-                <option value="Inicio">Inicio</option>
-
-                <option value="Diseñador">Diseñador de etiquetas ZPL</option>
-
-            </select>
-
-        </div>
-
-    </div>
-
-""", unsafe_allow_html=True)
-
- 
-
-# ✅ Contenido del submenú ZPL Designer
-
-st.markdown('<div class="form-container">', unsafe_allow_html=True)
-
-st.subheader("🏷️ Diseñador de etiqueta ZPL")
-
- 
-
-col1, col2 = st.columns(2)
-
- 
-
-with col1:
-
-    cliente = st.selectbox("🧑 Cliente", [
-
-        "prueba1", "COMAPAN", "MAFAM", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
-
-        "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS"
-
+# 📦 Inicializar estado del valor escaneado
+if "nombre_impresora_qr" not in st.session_state:
+    st.session_state["nombre_impresora_qr"] = ""
+
+# ✅ Menú lateral izquierdo
+with st.sidebar:
+    st.header("🧭 Menú")
+    opcion_menu = st.selectbox("Seleccione una opción", [
+        "Inicio",
+        "🏷️ Diseñador de etiqueta ZPL",
+        "📷 Escáner de impresora (cámara)"
     ])
 
- 
+# ✅ Escáner QR con cámara integrado
+if opcion_menu == "📷 Escáner de impresora (cámara)":
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.subheader("📷 Escáner QR desde cámara (integrado)")
+    st.caption("Apunta la cámara al código QR que contiene el nombre de la impresora. El valor escaneado se insertará automáticamente en el Diseñador de etiquetas.")
 
-with col2:
+    import streamlit.components.v1 as components
 
-    placa = st.selectbox("🚚 Placa", [
+    components.html("""
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <div id="reader" style="width:300px;margin:auto;"></div>
+    <div id="output" style="text-align:center;padding:10px;font-weight:bold;"></div>
+    <script>
+    function sendToStreamlit(text) {
+        const streamlitEvents = window.parent;
+        if (streamlitEvents) {
+            streamlitEvents.postMessage({type: "streamlit:setComponentValue", value: text}, "*");
+        }
+    }
 
-        201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
+    function onScanSuccess(decodedText, decodedResult) {
+        sendToStreamlit(decodedText);
+        document.getElementById("output").innerHTML = "<h3>✅ Escaneado: " + decodedText + "</h3>";
+    }
 
-        300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
+    let html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+        fps: 10,
+        qrbox: 250
+    });
+    html5QrcodeScanner.render(onScanSuccess);
+    </script>
+    """, height=500)
 
-        400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 500,
-
-        "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
-
-        "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
-
-    ])
-
- 
-
-cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
-
-impresora_ip = "192.168.101.119"
-
- 
-
-if st.button("🖨️ Imprimir etiquetas"):
-
-    exito = True
-
-    for i in range(cantidad_etiquetas):
-
-        zpl = (
-
-            "^XA\n"
-
-            "^PW600\n"
-
-            "^LL400\n"
-
-            "^FO50,30^A0N,40,40^FDCliente:^FS\n"
-
-            f"^FO250,30^A0N,40,40^FD{cliente}^FS\n"
-
-            "^FO50,100^A0N,40,40^FDPlaca:^FS\n"
-
-            f"^FO250,100^A0N,40,40^FD{placa}^FS\n"
-
-            f"^FO50,170^A0N,40,40^FDEtiqueta {i+1} de {cantidad_etiquetas}^FS\n"
-
-            "^XZ\n"
-
-        )
-
-        try:
-
-            import socket
-
-            port = 9100
-
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as printer_socket:
-
-                printer_socket.connect((impresora_ip, port))
-
-                printer_socket.send(zpl.encode("utf-8"))
-
-            st.write(f"✅ Etiqueta {i+1} enviada correctamente")
-
-        except Exception as e:
-
-            st.error(f"❌ Falló el envío de la etiqueta {i+1}: {e}")
-
-            exito = False
-
-            break
-
- 
-
-    if exito:
-
-        st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra (IP: {impresora_ip})")
-
- 
-
-st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
