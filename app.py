@@ -239,7 +239,7 @@ elif opcion_menu == "📷 Escáner de impresora (cámara)":
 # 🏷️ DISEÑADOR DE ETIQUETAS
 elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.subheader("🏷️ Diseñador de Etiqueta ZPL")
+    st.subheader("🏷️ Diseñador de Etiqueta SIT")
 
     col1, col2 = st.columns(2)
     with col1:
@@ -254,7 +254,7 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
         ])
 
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
-    ip_impresora = st.text_input("🖨️ IP de la impresora", value=st.session_state["nombre_impresora_qr"])
+    ip_impresora = st.text_input("🖨️ Selecciones la impresora", value=st.session_state["nombre_impresora_qr"])
 
     if st.button("🖨️ Imprimir etiquetas"):
         if ip_impresora not in ips_impresoras_validas:
