@@ -187,7 +187,7 @@ with st.sidebar:
     opcion_menu = st.selectbox("Seleccione una opción", ["Inicio", "🏷️ Diseñador de etiqueta ZPL"])
 
 # ✅ Contenido del submenú "Diseñador de etiqueta ZPL"
-if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
+if opcion_menu == "🏷️ Diseñador de etiqueta SIT":
     with st.container():
         st.markdown('<div class="form-container">', unsafe_allow_html=True)
         st.subheader("🏷️ Diseñador de etiqueta ZPL")
