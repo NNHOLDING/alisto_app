@@ -184,7 +184,7 @@ st.markdown("""
 # ✅ Menú lateral izquierdo
 with st.sidebar:
     st.header("🧭 Menú")
-    opcion_menu = st.selectbox("Seleccione una opción", ["Inicio", "🏷️ Diseñador de etiqueta ZPL"])
+    opcion_menu = st.selectbox("Seleccione una opción", ["Inicio", "🏷️ Diseñador de etiqueta ZPL","📊 Historial de Certificados"])
 
 # ✅ Contenido del submenú "Diseñador de etiqueta ZPL"
 if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
