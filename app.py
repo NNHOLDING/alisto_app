@@ -244,8 +244,8 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
                     input.value = decodedText;
                     input.dispatchEvent(new Event('input', { bubbles: true }));
                 }
-                document.getElementById("reader").innerHTML = "<div style='text-align:center;'>✅ Escaneado</div>";
-            }
+                #document.getElementById("reader").innerHTML = "<div style='text-align:center;'>✅ Escaneado</div>";
+           # }
             let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
             html5QrcodeScanner.render(onScanSuccess);
             </script>
