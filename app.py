@@ -181,16 +181,28 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 🔄 Inicializar el estado del menú
-if "menu_seleccionado" not in st.session_state:
-    st.session_state["menu_seleccionado"] = "🏠 Inicio"
+# 📦 Inicializar estado del escaneo si no existe
+if "nombre_impresora_qr" not in st.session_state:
+    st.session_state["nombre_impresora_qr"] = ""
 
-# ✅ Menú lateral estilo moderno
+# ✅ Menú lateral visual y elegante
 with st.sidebar:
+    st.markdown("""
+        <style>
+        .block-container {
+            padding-top: 1rem;
+        }
+        .sidebar .sidebar-content {
+            background-color: #f0f2f6;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
     st.markdown("## ☰ Menú Principal")
-    if st.button("🏠 Inicio"):
-        st.session_state["menu_seleccionado"] = "🏠 Inicio"
-    if st.button("🏷️ Diseñador de etiqueta ZPL"):
-        st.session_state["menu_seleccionado"] = "🏷️ Diseñador de etiqueta ZPL"
-    if st.button("📷 Escáner de impresora (cámara)"):
-        st.session_state["menu_seleccionado"] = "📷 Escáner de impresora (cámara)"
+    opcion_menu = st.radio(
+        "Navega por las opciones:",
+        ["🏠 Inicio", "🏷️ Diseñador de etiqueta ZPL", "📷 Escáner de impresora (cámara)"],
+        label_visibility="collapsed"
+    )
