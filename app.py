@@ -181,28 +181,78 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 📦 Inicializar estado del escaneo si no existe
+# 📦 Inicializar estado si no existe
 if "nombre_impresora_qr" not in st.session_state:
     st.session_state["nombre_impresora_qr"] = ""
 
-# ✅ Menú lateral visual y elegante
+# ✅ Menú lateral visual y funcional
 with st.sidebar:
-    st.markdown("""
-        <style>
-        .block-container {
-            padding-top: 1rem;
-        }
-        .sidebar .sidebar-content {
-            background-color: #f0f2f6;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+    st.markdown("## ☰ Menú")
+    opcion_menu = st.radio("Selecciona una opción:", [
+        "Inicio",
+        "🏷️ Diseñador de etiqueta ZPL"
+    ], label_visibility="collapsed")
 
-    st.markdown("## ☰ Menú Principal")
-    opcion_menu = st.radio(
-        "Navega por las opciones:",
-        ["🏠 Inicio", "🏷️ Diseñador de etiqueta ZPL", "📷 Escáner de impresora (cámara)"],
-        label_visibility="collapsed"
-    )
+# ✅ Contenido para Diseñador de etiqueta ZPL
+if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
+    with st.container():
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.subheader("🏷️ Diseñador de etiqueta ZPL")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            cliente = st.selectbox("🧑 Cliente", [
+                "prueba1", "COMPAN", "MAFAM", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
+                "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS"
+            ])
+
+        with col2:
+            placa = st.selectbox("🚚 Placa", [
+                201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
+                300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
+                400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 500,
+                "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
+                "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
+            ])
+
+        cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
+        impresora_ip = "192.188.101.118"  # ← IP fija, puedes usar st.session_state si quieres que venga del escáner
+
+        if st.button("🖨️ Imprimir etiquetas"):
+            exito = True
+            for i in range(cantidad_etiquetas):
+                zpl = (
+                    "^XA\n"
+                    "^PW600\n"
+                    "^LL400\n"
+                    "^FO50,30^A0N,40,40^FDCliente:^FS\n"
+                    f"^FO250,30^A0N,40,40^FD{cliente}^FS\n"
+                    "^FO50,100^A0N,40,40^FDPlaca:^FS\n"
+                    f"^FO250,100^A0N,40,40^FD{placa}^FS\n"
+                    f"^FO50,170^A0N,40,40^FDEtiqueta {i+1} de {cantidad_etiquetas}^FS\n"
+                    "^XZ\n"
+                )
+                try:
+                    import socket
+                    port = 9100
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as printer_socket:
+                        printer_socket.connect((impresora_ip, port))
+                        printer_socket.send(zpl.encode("utf-8"))
+                    st.write(f"✅ Etiqueta {i+1} enviada correctamente")
+                except Exception as e:
+                    st.error(f"❌ Falló el envío de la etiqueta {i+1}: {e}")
+                    exito = False
+                    break
+
+            if exito:
+                st.success(
+                    f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra (60SANJOSE - IP: {impresora_ip})"
+                )
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# ✅ Contenido para Inicio
+elif opcion_menu == "Inicio":
+    st.title("🏠 Bienvenido a Smart Intelligence Tools")
+    st.info("Selecciona una herramienta desde el menú lateral para comenzar.")
