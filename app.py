@@ -105,7 +105,7 @@ with st.container():
                 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412,
                 500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
                 "WALMART", "MEGASUPER", "GESSA", "AGENT", "MAFAM", "DEMASA", "LOS PATITOS", "WALMART", "PRICESMART", "AUTODELI", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
-            ]
+                ]
             opcion = st.selectbox("🚚 Seleccione una opción de placa", opciones_placa)
             placa = st.text_input("🔢 Placa", value=str(opcion))
             lote = st.text_input("🏷️ Lote")
