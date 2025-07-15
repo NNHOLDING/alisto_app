@@ -227,10 +227,10 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
 
     cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
 
-    # 🖨️ Campo de IP editable y visible para el lector QR
+    # Campo de IP editable
     ip_impresora = st.text_input("🖨️ IP de la impresora", key="ip_impresora_manual")
 
-    # 📷 Activar lector QR directamente
+    # Activar lector QR
     activar_lector = st.button("📷 Escanear código QR de impresora")
     if activar_lector:
         import streamlit.components.v1 as components
@@ -239,22 +239,25 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
             <div id="reader" style="width:300px;margin:auto;"></div>
             <script>
             function onScanSuccess(decodedText, decodedResult) {
-                const input = document.querySelector("input[data-testid='stTextInput']");
-                if (input) {
-                    input.value = decodedText;
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                const inputs = document.querySelectorAll("input[data-testid='stTextInput']");
+                for (let input of inputs) {
+                    if (input.parentElement.innerText.includes("IP de la impresora")) {
+                        input.value = decodedText;
+                        input.dispatchEvent(new Event('input', { bubbles: true }));
+                        break;
+                    }
                 }
-                #document.getElementById("reader").innerHTML = "<div style='text-align:center;'>✅ Escaneado</div>";
-           # }
+                document.getElementById("reader").remove(); // Cierra lector
+            }
             let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
             html5QrcodeScanner.render(onScanSuccess);
             </script>
-        """, height=500)
+        """, height=550)
 
-    # 🖨️ Validar IP y imprimir etiquetas
+    # Validar y enviar etiquetas
     if st.button("🖨️ Imprimir etiquetas"):
         if ip_impresora not in ips_impresoras_validas:
-            st.error("❌ IP inválida. Verifica o escanea una impresora autorizada.")
+            st.error("❌ IP inválida. Escanea o escribe una impresora autorizada.")
         else:
             exito = True
             for i in range(cantidad_etiquetas):
