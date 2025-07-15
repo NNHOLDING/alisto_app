@@ -199,7 +199,7 @@ with st.sidebar:
     st.markdown("## ☰ Menú")
     opcion_menu = st.radio("Selecciona una opción:", [
         "Inicio",
-        "🏷️ Diseñador de etiqueta ZPL",
+        "🏷️ Diseñador de etiqueta SIT",
         "📷 Escáner de impresora (cámara)"
     ], label_visibility="collapsed")
 
@@ -237,7 +237,7 @@ elif opcion_menu == "📷 Escáner de impresora (cámara)":
         st.success(f"✅ IP escaneada asignada: {valor_qr}")
 
 # 🏷️ DISEÑADOR DE ETIQUETAS
-elif opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
+elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
     st.subheader("🏷️ Diseñador de Etiqueta ZPL")
 
