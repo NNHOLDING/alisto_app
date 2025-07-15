@@ -38,7 +38,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Título
-st.title("📦 Smart Intelligence Tools")
+st.title("📦 Smart Intelligence Tools - Almacén Unimar")
 
 # Hora local de Costa Rica
 cr_timezone = pytz.timezone("America/Costa_Rica")
@@ -90,7 +90,7 @@ with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
 
     with st.form("formulario_alisto"):
-        st.subheader("📝 Almacen Unimar 60")
+        st.subheader("📝 Ingreso de datos")
 
         col1, col2 = st.columns(2)
         with col1:
@@ -104,8 +104,8 @@ with st.container():
                 300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
                 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412,
                 500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
-                "WALMART", "MEGASUPER", "GESSA", "AGENT", "MAFAM", "DEMASA", "LOS PATITOS", "WALMART", "PRICESMART", "AUTODELI", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
-                ]
+                "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
+            ]
             opcion = st.selectbox("🚚 Seleccione una opción de placa", opciones_placa)
             placa = st.text_input("🔢 Placa", value=str(opcion))
             lote = st.text_input("🏷️ Lote")
@@ -152,8 +152,8 @@ with st.container():
                     cantidad,
                     lote,
                     str(fecha_lote),
-                    str(codigo_seleccionado),
                     nombre_empleado,
+                    str(codigo_seleccionado),
                     str(hora)
                 ]
                 guardar_en_google_sheets(datos)
@@ -181,87 +181,38 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 🟢 Inicializar estados
-if "nombre_impresora_qr" not in st.session_state:
-    st.session_state["nombre_impresora_qr"] = ""
-if "component_value" not in st.session_state:
-    st.session_state["component_value"] = ""
-
-# 🔐 IPs válidas
-ips_impresoras_validas = [
-    "192.188.101.118",
-    "192.168.1.201",
-    "10.0.0.10"
-]
-
-# 🔧 Menú lateral
+# ✅ Menú lateral izquierdo
 with st.sidebar:
-    st.markdown("## ☰ Menú")
-    opcion_menu = st.radio("Selecciona una opción:", [
-        "Inicio",
-        "🏷️ Diseñador de etiqueta SIT",
-        "📷 Escáner de impresora (cámara)"
-    ], label_visibility="collapsed")
+    st.header("🧭 Menú")
+    opcion_menu = st.selectbox("Seleccione una opción", ["Inicio", "🏷️ Diseñador de etiqueta ZPL"])
 
-# 🏠 INICIO
-if opcion_menu == "Inicio":
-    st.title(" ")
-    st.info(" ")
+# ✅ Contenido del submenú "Diseñador de etiqueta ZPL"
+if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
+    with st.container():
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.subheader("🏷️ Diseñador de etiqueta ZPL")
 
-# 🏷️ DISEÑADOR
-elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
-    st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.subheader("🏷️ Diseñador de Etiqueta SIT")
+        col1, col2 = st.columns(2)
 
-    col1, col2 = st.columns(2)
-    with col1:
-        cliente = st.selectbox("🧑 Cliente", [
-            "prueba1", "COMPAN", "MAFAM", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
-            "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS"
-        ])
-    with col2:
-        placa = st.selectbox("🚚 Placa", [
-                200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
+        with col1:
+            cliente = st.selectbox("🧑 Cliente", [
+                "prueba1", "COMPAN", "MAFAM", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
+                "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS"
+            ])
+
+        with col2:
+            placa = st.selectbox("🚚 Placa", [
+                201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
                 300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
-                400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412,
-                500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
-                "WALMART", "MEGASUPER", "GESSA", "AGENT", "MAFAM", "DEMASA", "LOS PATITOS", "WALMART", "PRICESMART", "AUTODELI", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
-                ])
+                400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 500,
+                "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
+                "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
+            ])
 
-    cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
+        cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
+        impresora_ip = "192.188.101.118"  # IP de la impresora Zebra (60SANJOSE)
 
-    # Campo de IP editable
-    ip_impresora = st.text_input("🖨️ IP de la impresora", key="ip_impresora_manual")
-
-    # Activar lector QR
-    activar_lector = st.button("📷 Escanear código QR de impresora")
-    if activar_lector:
-        import streamlit.components.v1 as components
-        components.html("""
-            <script src="https://unpkg.com/html5-qrcode"></script>
-            <div id="reader" style="width:300px;margin:auto;"></div>
-            <script>
-            function onScanSuccess(decodedText, decodedResult) {
-                const inputs = document.querySelectorAll("input[data-testid='stTextInput']");
-                for (let input of inputs) {
-                    if (input.parentElement.innerText.includes("IP de la impresora")) {
-                        input.value = decodedText;
-                        input.dispatchEvent(new Event('input', { bubbles: true }));
-                        break;
-                    }
-                }
-                document.getElementById("reader").remove(); // Cierra lector
-            }
-            let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
-            html5QrcodeScanner.render(onScanSuccess);
-            </script>
-        """, height=550)
-
-    # Validar y enviar etiquetas
-    if st.button("🖨️ Imprimir etiquetas"):
-        if ip_impresora not in ips_impresoras_validas:
-            st.error("❌ IP inválida. Escanea o escribe una impresora autorizada.")
-        else:
+        if st.button("🖨️ Imprimir etiquetas"):
             exito = True
             for i in range(cantidad_etiquetas):
                 zpl = (
@@ -279,14 +230,15 @@ elif opcion_menu == "🏷️ Diseñador de etiqueta SIT":
                     import socket
                     port = 9100
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as printer_socket:
-                        printer_socket.connect((ip_impresora, port))
+                        printer_socket.connect((impresora_ip, port))
                         printer_socket.send(zpl.encode("utf-8"))
                     st.write(f"✅ Etiqueta {i+1} enviada correctamente")
                 except Exception as e:
                     st.error(f"❌ Falló el envío de la etiqueta {i+1}: {e}")
                     exito = False
                     break
-            if exito:
-                st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora ({ip_impresora})")
 
-    st.markdown('</div>', unsafe_allow_html=True)
+            if exito:
+                st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra (60SANJOSE - IP: {impresora_ip})")
+
+        st.markdown('</div>', unsafe_allow_html=True)
