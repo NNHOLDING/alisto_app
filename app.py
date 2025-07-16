@@ -181,95 +181,40 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+import streamlit as st
+import pandas as pd
+import altair as alt
+import datetime
+import gspread
+import socket
+from oauth2client.service_account import ServiceAccountCredentials
+
 # ✅ Menú lateral izquierdo
 with st.sidebar:
     st.header("🧭 Menú")
-    opcion_menu = st.selectbox("Seleccione una opción", ["Inicio", "🏷️ Diseñador de etiqueta ZPL","📊 Historial de Certificados"])
+    opcion_menu = st.selectbox("Seleccione una opción", [
+        "Inicio",
+        "🏷️ Diseñador de etiqueta ZPL",
+        "📊 Historial de Certificados"
+    ])
 
-# ✅ Contenido del submenú "Diseñador de etiqueta ZPL"
+# ✅ Submenú: Diseñador de etiqueta ZPL
 if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
     with st.container():
         st.markdown('<div class="form-container">', unsafe_allow_html=True)
         st.subheader("🏷️ Diseñador de etiqueta ZPL")
 
-        #col1, col2 = st.columns(2)
-elif opcion_menu == "📊 Historial de Certificados":
-    import pandas as pd
-import pandas as pd
-import altair as alt
-import datetime
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+        col1, col2 = st.columns(2)
 
-# 📡 Función para cargar historial desde Google Sheets
-def cargar_historial_certificados():
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    service_account_info = st.secrets["gcp_service_account"]
-    credentials = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
-    client = gspread.authorize(credentials)
-    sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit").worksheet("TCertificados")
-    registros = sheet.get_all_values()
-
-    df = pd.DataFrame(registros[1:], columns=registros[0])
-    df.columns = [col.lower() for col in df.columns]
-    df["fecha"] = pd.to_datetime(df["fecha"], format="%d/%m/%Y", errors="coerce")  # ← formato corregido
-    df["cantidad"] = pd.to_numeric(df["cantidad"], errors="coerce")
-    return df
-
-# ✅ Contenido del submenú "Historial de Certificados"
-if opcion_menu == "📊 Historial de Certificados":
-    st.subheader("📊 Historial de Certificados")
-
-    try:
-        df_historial = cargar_historial_certificados()
-
-        # 🎛️ Filtro por placa
-        placas_disponibles = df_historial["placa"].dropna().unique().tolist()
-        placas_filtradas = st.multiselect("Filtrar por placa", placas_disponibles)
-        if placas_filtradas:
-            df_historial = df_historial[df_historial["placa"].isin(placas_filtradas)]
-
-        # 🎛️ Filtro por orden
-        ordenes_disponibles = df_historial["orden"].dropna().unique().tolist()
-        ordenes_filtradas = st.multiselect("Filtrar por orden", ordenes_disponibles)
-        if ordenes_filtradas:
-            df_historial = df_historial[df_historial["orden"].isin(ordenes_filtradas)]
-
-        # 🎛️ Filtro por fecha (solo si hay al menos 2 fechas distintas)
-        fechas_unicas = df_historial["fecha"].dropna().unique()
-        if len(fechas_unicas) >= 2:
-            fecha_min = min(fechas_unicas).to_pydatetime()
-            fecha_max = max(fechas_unicas).to_pydatetime()
-            rango = st.slider("Filtrar por fecha", fecha_min, fecha_max, value=(fecha_min, fecha_max))
-            df_historial = df_historial[(df_historial["fecha"] >= rango[0]) & (df_historial["fecha"] <= rango[1])]
-        else:
-            st.info("Solo hay una fecha disponible. No se puede aplicar filtro de rango.")
-
-        # 📈 Gráfico interactivo
-        if not df_historial.empty:
-            chart = alt.Chart(df_historial).mark_bar().encode(
-                x="fecha:T",
-                y="cantidad:Q",
-                color="placa:N",
-                tooltip=["fecha", "placa", "cantidad", "orden", "nombre usuario"]
-            ).properties(width=700)
-
-            st.altair_chart(chart, use_container_width=True)
-
-            # 📋 Tabla de datos
-            st.markdown("### 📃 Detalle de registros")
-            st.dataframe(df_historial)
-        else:
-            st.info("No hay registros que coincidan con los filtros seleccionados.")
-
-    except Exception as e:
-        st.error(f"❌ Error al cargar historial: {e}")
         with col1:
             cliente = st.selectbox("🧑 Cliente", [
-                "prueba1", "COMAPAN", "MAFAM", "DEMASA", "PANIFICADORA ZULIGA", "PEDRO FABIAN", "PANIFICADORA LEANDRO", "AUTODELI", "SUR QUEMICA", "POZUELO", "FMS FOOD MANUFACTURING", "PURATOS", "LOS PATITOS", "DOS PINOS", "ESCULTURA DE JADE", "YAM PAI", "KATIA MARIA VARGAS", "COMPAÑIA LEE QUIROS", "UNIVERSAL DE ALIMENTOS", "COMPAN", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
+                "prueba1", "COMAPAN", "MAFAM", "DEMASA", "PANIFICADORA ZULIGA", "PEDRO FABIAN", "PANIFICADORA LEANDRO",
+                "AUTODELI", "SUR QUEMICA", "POZUELO", "FMS FOOD MANUFACTURING", "PURATOS", "LOS PATITOS",
+                "DOS PINOS", "ESCULTURA DE JADE", "YAM PAI", "KATIA MARIA VARGAS", "COMPAÑIA LEE QUIROS",
+                "UNIVERSAL DE ALIMENTOS", "COMPAN", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
                 "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS CENTROAMERICA"
             ])
-        col1, col2 = st.columns(2)
+
         with col2:
             placa = st.selectbox("🚚 Placa", [
                 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
@@ -280,7 +225,7 @@ if opcion_menu == "📊 Historial de Certificados":
             ])
 
         cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
-        impresora_ip = "192.168.34.10"  # IP de la impresora Zebra (60SANJOSE)
+        impresora_ip = "192.168.34.10"
 
         if st.button("🖨️ Imprimir etiquetas"):
             exito = True
@@ -298,7 +243,6 @@ if opcion_menu == "📊 Historial de Certificados":
                     "^XZ\n"
                 )
                 try:
-                    import socket
                     port = 9100
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as printer_socket:
                         printer_socket.connect((impresora_ip, port))
@@ -310,6 +254,64 @@ if opcion_menu == "📊 Historial de Certificados":
                     break
 
             if exito:
-                st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra (60SANJOSE - IP: {impresora_ip})")
+                st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra ({impresora_ip})")
 
         st.markdown('</div>', unsafe_allow_html=True)
+
+# ✅ Submenú: Historial de Certificados
+if opcion_menu == "📊 Historial de Certificados":
+
+    def cargar_historial_certificados():
+        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+        service_account_info = st.secrets["gcp_service_account"]
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
+        client = gspread.authorize(credentials)
+        sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/1RsNWb6CwsKd6xt-NffyUDmVgDOgqSo_wgR863Mxje30/edit").worksheet("TCertificados")
+        registros = sheet.get_all_values()
+
+        df = pd.DataFrame(registros[1:], columns=registros[0])
+        df.columns = [col.lower() for col in df.columns]
+        df["fecha"] = pd.to_datetime(df["fecha"], format="%d/%m/%Y", errors="coerce")
+        df["cantidad"] = pd.to_numeric(df["cantidad"], errors="coerce")
+        return df
+
+    st.subheader("📊 Historial de Certificados")
+
+    try:
+        df_historial = cargar_historial_certificados()
+
+        placas_filtradas = st.multiselect("Filtrar por placa", df_historial["placa"].dropna().unique().tolist())
+        if placas_filtradas:
+            df_historial = df_historial[df_historial["placa"].isin(placas_filtradas)]
+
+        ordenes_filtradas = st.multiselect("Filtrar por orden", df_historial["orden"].dropna().unique().tolist())
+        if ordenes_filtradas:
+            df_historial = df_historial[df_historial["orden"].isin(ordenes_filtradas)]
+
+        fechas_unicas = df_historial["fecha"].dropna().unique()
+        if len(fechas_unicas) >= 2:
+            fecha_min = min(fechas_unicas).to_pydatetime()
+            fecha_max = max(fechas_unicas).to_pydatetime()
+            rango = st.slider("Filtrar por fecha", fecha_min, fecha_max, value=(fecha_min, fecha_max))
+            df_historial = df_historial[
+                (df_historial["fecha"] >= rango[0]) & (df_historial["fecha"] <= rango[1])
+            ]
+        else:
+            st.info("Solo hay una fecha disponible. No se puede aplicar filtro de rango.")
+
+        if not df_historial.empty:
+            chart = alt.Chart(df_historial).mark_bar().encode(
+                x="fecha:T",
+                y="cantidad:Q",
+                color="placa:N",
+                tooltip=["fecha", "placa", "cantidad", "orden", "nombre usuario"]
+            ).properties(width=700)
+
+            st.altair_chart(chart, use_container_width=True)
+            st.markdown("### 📃 Detalle de registros")
+            st.dataframe(df_historial)
+        else:
+            st.info("No hay registros que coincidan con los filtros seleccionados.")
+
+    except Exception as e:
+        st.error(f"❌ Error al cargar historial: {e}")
