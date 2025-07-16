@@ -38,7 +38,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Título
-st.title("📦 Smart Intelligence Tools - Almacén Unimar")
+st.title("📦 Smart Intelligence Tools ")
 
 # Hora local de Costa Rica
 cr_timezone = pytz.timezone("America/Costa_Rica")
@@ -90,7 +90,7 @@ with st.container():
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
 
     with st.form("formulario_alisto"):
-        st.subheader("📝 Ingreso de datos")
+        st.subheader("📝 Alamcen Unimar")
 
         col1, col2 = st.columns(2)
         with col1:
