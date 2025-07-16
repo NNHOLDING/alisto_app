@@ -144,7 +144,7 @@ with st.container():
             else:
                 # Registro en Google Sheets
                 datos = [
-                    fecha.strftime("%d/%m/%Y"),
+                    fecha.strftime("%d/%m/%Y") .replace("'", ""),
                     numero_orden,
                     placa,
                     codigo,
