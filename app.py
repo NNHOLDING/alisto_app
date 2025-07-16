@@ -192,7 +192,7 @@ if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
         st.markdown('<div class="form-container">', unsafe_allow_html=True)
         st.subheader("🏷️ Diseñador de etiqueta ZPL")
 
-        col1, col2 = st.columns(2)
+        #col1, col2 = st.columns(2)
 elif opcion_menu == "📊 Historial de Certificados":
     import pandas as pd
 import pandas as pd
@@ -269,7 +269,7 @@ if opcion_menu == "📊 Historial de Certificados":
                 "prueba1", "COMAPAN", "MAFAM", "DEMASA", "PANIFICADORA ZULIGA", "PEDRO FABIAN", "PANIFICADORA LEANDRO", "AUTODELI", "SUR QUEMICA", "POZUELO", "FMS FOOD MANUFACTURING", "PURATOS", "LOS PATITOS", "DOS PINOS", "ESCULTURA DE JADE", "YAM PAI", "KATIA MARIA VARGAS", "COMPAÑIA LEE QUIROS", "UNIVERSAL DE ALIMENTOS", "COMPAN", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
                 "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS CENTROAMERICA"
             ])
-
+        col1, col2 = st.columns(2)
         with col2:
             placa = st.selectbox("🚚 Placa", [
                 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
