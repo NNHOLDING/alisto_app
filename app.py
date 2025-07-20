@@ -1,7 +1,7 @@
 import streamlit as st
 st.set_page_config(
     page_title="Smart Intelligence Tools",
-    page_icon="🏷️",
+    page_icon="NN25.ico",
     layout="centered"
 )
 
