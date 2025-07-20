@@ -4,6 +4,13 @@ import pytz
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+# Configuración de la página
+st.set_page_config(
+    page_title="Smart Intelligence Tools",
+    page_icon="🏷NN",
+    layout="centered"
+)
+
 # Función para guardar datos en Google Sheets
 def guardar_en_google_sheets(datos):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -102,11 +109,7 @@ with st.container():
             opciones_placa = [
                 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219,
                 300, 310, 302, 303, 304, 305, 306, 307, 308, 309, 311, 312, 313, 314, 315, 316, 317, 318, 319,
-                400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, "COMAPAN", "MAFAM", "DEMASA", "PANIFICADORA ZULIGA", "PEDRO FABIAN", "PANIFICADORA LEANDRO",
-                "AUTODELI", "SUR QUEMICA", "POZUELO", "FMS FOOD MANUFACTURING", "PURATOS", "LOS PATITOS",
-                "DOS PINOS", "ESCULTURA DE JADE", "YAM PAI", "KATIA MARIA VARGAS", "COMPAÑIA LEE QUIROS",
-                "UNIVERSAL DE ALIMENTOS", "COMPAN", "DEMASA", "BIMBO COSTA RICA", "INDUSTRIA KURI",
-                "QUIMICAS MUNDIALES", "POPS", "ALIMENTOS LIJEROS CENTROAMERICA", 412,
+                400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412,
                 500, "SIGMA", "POZUELO", "MAFAM", "COMAPAN", "UNIVERSAL ALIMENTOS", "POPS", "HILLTOP", "SAM",
                 "WALMART", "MEGASUPER", "GESSA", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F08"
             ]
