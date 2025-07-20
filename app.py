@@ -1,10 +1,41 @@
 import streamlit as st
-# Configuración de la página
 st.set_page_config(
     page_title="Smart Intelligence Tools",
-    page_icon="🏷NN",
+    page_icon="🏷️",
     layout="centered"
 )
+
+# 🖼️ Inserta ícono personalizado desde GitHub
+st.markdown("""
+<link rel="shortcut icon" href="https://raw.githubusercontent.com/NNHOLDING/alisto_app/main/NN25.ico">
+""", unsafe_allow_html=True)
+
+# 🖌️ Estilo personalizado
+st.markdown("""
+<style>
+.form-container {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 20px;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+}
+.stButton>button {
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 8px;
+    padding: 10px 20px;
+    border: none;
+}
+.stButton>button:hover {
+    background-color: #45a049;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.title("📦 Smart Intelligence Tools")
+
 from datetime import datetime
 import pytz
 import gspread
