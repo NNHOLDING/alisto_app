@@ -75,7 +75,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Título
-st.title("📦 Smart Intelligence Tools ")
+st.title("NN HOLDING SOLUTIONS ")
 
 # Hora local de Costa Rica
 cr_timezone = pytz.timezone("America/Costa_Rica")
