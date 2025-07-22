@@ -235,6 +235,23 @@ with st.sidebar:
         "📊 Historial de Certificados"
     ])
 
+import socket
+import streamlit as st
+
+# 🔍 Buscar impresoras Zebra en red local
+def buscar_impresoras_zebra(ip_base="192.168.34", puerto=9100, timeout=0.3):
+    impresoras = []
+    for i in range(1, 255):
+        ip = f"{ip_base}.{i}"
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.settimeout(timeout)
+                s.connect((ip, puerto))
+                impresoras.append(ip)
+        except:
+            continue
+    return impresoras
+
 # ✅ Submenú: Diseñador de etiqueta ZPL
 if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
     with st.container():
@@ -262,9 +279,23 @@ if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
             ])
 
         cantidad_etiquetas = st.number_input("🔢 Cantidad de etiquetas", min_value=1, step=1)
-        impresora_ip = "192.168.34.10"
 
-        if st.button("🖨️ Imprimir etiquetas"):
+        metodo_impresion = st.radio("📡 Método de conexión a impresora", ["IP fija", "Búsqueda automática"])
+
+        impresora_ip = None
+        if metodo_impresion == "IP fija":
+            impresora_ip = "192.168.34.10"
+            st.info(f"📌 Usando IP fija: {impresora_ip}")
+        else:
+            if st.button("🔍 Buscar impresoras Zebra"):
+                impresoras_disponibles = buscar_impresoras_zebra()
+                if impresoras_disponibles:
+                    st.success(f"✅ {len(impresoras_disponibles)} impresoras encontradas")
+                    impresora_ip = st.selectbox("📡 Seleccione impresora", impresoras_disponibles)
+                else:
+                    st.error("❌ No se encontró ninguna impresora Zebra en el rango")
+
+        if impresora_ip and st.button("🖨️ Imprimir etiquetas"):
             exito = True
             for i in range(cantidad_etiquetas):
                 zpl = (
@@ -291,10 +322,9 @@ if opcion_menu == "🏷️ Diseñador de etiqueta ZPL":
                     break
 
             if exito:
-                st.success(f"✅ Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra ({impresora_ip})")
+                st.success(f"🎉 Se enviaron {cantidad_etiquetas} etiquetas a la impresora Zebra ({impresora_ip})")
 
         st.markdown('</div>', unsafe_allow_html=True)
-
 # ✅ Submenú: Historial de Certificados
 if opcion_menu == "📊 Historial de Certificados":
 
